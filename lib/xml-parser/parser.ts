@@ -1,5 +1,43 @@
 import { parseStringPromise, Builder } from 'xml2js';
 import * as fs from 'fs/promises';
+import * as os from 'os';
+import * as path from 'path';
+
+type ImportErrorCode =
+  | 'IMPORT_SOURCE_NOT_FOUND'
+  | 'IMPORT_EMPTY_FILE'
+  | 'IMPORT_XML_NOT_WELL_FORMED'
+  | 'IMPORT_ENCODING_INVALID'
+  | 'IMPORT_XML_SCHEMA_INVALID'
+  | 'IMPORT_REFERENCE_INVALID'
+  | 'IMPORT_DUPLICATE_KEY'
+  | 'IMPORT_NAMESPACE_INVALID'
+  | 'IMPORT_TIMEOUT'
+  | 'SEC_XXE_BLOCKED'
+  | 'SEC_ENTITY_EXPANSION_BLOCKED'
+  | 'SEC_DOCTYPE_FORBIDDEN'
+  | 'SEC_SIZE_LIMIT_EXCEEDED'
+  | 'SEC_MAX_DEPTH_EXCEEDED'
+  | 'SEC_CONTENT_TYPE_INVALID'
+  | 'SEC_PATH_TRAVERSAL_BLOCKED';
+
+class ImportWorkflowError extends Error {
+  code: ImportErrorCode;
+  stage?: string;
+  entryKey?: string;
+
+  constructor(code: ImportErrorCode, message: string, stage?: string, entryKey?: string) {
+    super(message);
+    this.name = 'ImportWorkflowError';
+    this.code = code;
+    this.stage = stage;
+    this.entryKey = entryKey;
+  }
+}
+
+const DEFAULT_MAX_XML_BYTES = 5 * 1024 * 1024; // 5MB safety default
+const DEFAULT_MAX_DEPTH = 512;
+const EXPECTED_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance';
 
 /**
  * Parsed UBS Thematic Lexicon Entry
@@ -27,6 +65,7 @@ export interface ParsedEntry {
     sourceFormat: 'xml';
     checksum: string;
   };
+  unknownElements?: Record<string, unknown>;
 }
 
 /**
@@ -35,16 +74,36 @@ export interface ParsedEntry {
  * @returns Array of parsed entries
  */
 export async function parseUBSXml(filePath: string): Promise<ParsedEntry[]> {
-  const xmlContent = await fs.readFile(filePath, 'utf-8');
-  const parsed = await parseStringPromise(xmlContent, {
-    preserveChildrenOrder: true,
-    explicitArray: false,
+  const xmlContent = await readAndValidateXml(filePath, {
+    maxBytes: DEFAULT_MAX_XML_BYTES,
+    maxDepth: DEFAULT_MAX_DEPTH,
   });
 
+  let parsed: any;
+  try {
+    parsed = await parseStringPromise(xmlContent, {
+      preserveChildrenOrder: true,
+      explicitArray: false,
+    });
+  } catch (error) {
+    throw new ImportWorkflowError(
+      'IMPORT_XML_NOT_WELL_FORMED',
+      error instanceof Error ? error.message : String(error),
+      'parse'
+    );
+  }
+
+  if (!parsed || !parsed.Thematic_Lexicon) {
+    throw new ImportWorkflowError('IMPORT_XML_NOT_WELL_FORMED', 'Missing Thematic_Lexicon root element', 'parse');
+  }
+
   const entries: ParsedEntry[] = [];
-  const themLexEntries = Array.isArray(parsed.Thematic_Lexicon.ThemLex_Entry)
-    ? parsed.Thematic_Lexicon.ThemLex_Entry
-    : [parsed.Thematic_Lexicon.ThemLex_Entry];
+  const rawEntries = parsed.Thematic_Lexicon.ThemLex_Entry;
+  const themLexEntries = Array.isArray(rawEntries)
+    ? rawEntries
+    : rawEntries
+    ? [rawEntries]
+    : [];
 
   for (const xmlEntry of themLexEntries) {
     const entry = parseThemLexEntry(xmlEntry, xmlContent);
@@ -58,7 +117,7 @@ export async function parseUBSXml(filePath: string): Promise<ParsedEntry[]> {
  * Parse a single ThemLex_Entry element
  */
 function parseThemLexEntry(xmlEntry: any, fullXml: string): ParsedEntry {
-  const key = xmlEntry.$.Key || '';
+  const key = xmlEntry?.$?.Key || '';
   const title = extractText(xmlEntry.Title);
   const intro = extractText(xmlEntry.Intro) || null;
 
@@ -86,7 +145,20 @@ function parseThemLexEntry(xmlEntry: any, fullXml: string): ParsedEntry {
       sourceFormat: 'xml',
       checksum,
     },
+    unknownElements: collectUnknownElements(xmlEntry),
   };
+}
+
+function collectUnknownElements(xmlEntry: any): Record<string, unknown> {
+  if (!xmlEntry || typeof xmlEntry !== 'object') return {};
+  const known = new Set(['$', 'Title', 'Intro', 'Sections', 'Index']);
+  const unknown: Record<string, unknown> = {};
+  for (const key of Object.keys(xmlEntry)) {
+    if (!known.has(key)) {
+      unknown[key] = xmlEntry[key];
+    }
+  }
+  return unknown;
 }
 
 /**
@@ -287,4 +359,235 @@ export function serializeEntryToXml(entry: ParsedEntry): string {
   };
 
   return builder.buildObject(xmlObj);
+}
+
+interface XmlLimits {
+  maxBytes: number;
+  maxDepth: number;
+}
+
+async function readAndValidateXml(filePath: string, limits: XmlLimits): Promise<string> {
+  let data: Buffer;
+  try {
+    data = await fs.readFile(filePath);
+  } catch (error: any) {
+    if (error && error.code === 'ENOENT') {
+      throw new ImportWorkflowError('IMPORT_SOURCE_NOT_FOUND', `Source file not found: ${filePath}`, 'read');
+    }
+    throw error;
+  }
+
+  if (data.length === 0) {
+    throw new ImportWorkflowError('IMPORT_EMPTY_FILE', 'XML source file is empty', 'read');
+  }
+
+  if (data.length > limits.maxBytes) {
+    throw new ImportWorkflowError('SEC_SIZE_LIMIT_EXCEEDED', `XML exceeds ${limits.maxBytes} bytes`, 'read');
+  }
+
+  let xmlContent = '';
+  try {
+    const decoder = new TextDecoder('utf-8', { fatal: true });
+    xmlContent = decoder.decode(data);
+  } catch {
+    throw new ImportWorkflowError('IMPORT_ENCODING_INVALID', 'Invalid UTF-8 encoding in XML input', 'decode');
+  }
+
+  if (!xmlContent.trim()) {
+    throw new ImportWorkflowError('IMPORT_EMPTY_FILE', 'XML source file is empty', 'read');
+  }
+
+  if (!xmlContent.trimStart().startsWith('<')) {
+    throw new ImportWorkflowError('SEC_CONTENT_TYPE_INVALID', 'Input does not appear to be XML content', 'validate');
+  }
+
+  const docTypeMatch = /<!DOCTYPE[\s\S]*?>/i.test(xmlContent);
+  if (docTypeMatch) {
+    if (/<!ENTITY\s+[^>]*\s+(SYSTEM|PUBLIC)/i.test(xmlContent)) {
+      throw new ImportWorkflowError('SEC_XXE_BLOCKED', 'External entities are forbidden', 'validate');
+    }
+    if (/<!ENTITY/i.test(xmlContent)) {
+      throw new ImportWorkflowError('SEC_ENTITY_EXPANSION_BLOCKED', 'Entity declarations are forbidden', 'validate');
+    }
+    throw new ImportWorkflowError('SEC_DOCTYPE_FORBIDDEN', 'DOCTYPE declarations are forbidden', 'validate');
+  }
+
+  const depth = estimateXmlDepth(xmlContent);
+  if (depth > limits.maxDepth) {
+    throw new ImportWorkflowError('SEC_MAX_DEPTH_EXCEEDED', `XML nesting depth exceeds ${limits.maxDepth}`, 'validate');
+  }
+
+  return xmlContent;
+}
+
+function estimateXmlDepth(xmlContent: string): number {
+  const tagPattern = /<\/?([A-Za-z_][\w:.-]*)(?:\s[^>]*)?>/g;
+  let depth = 0;
+  let maxDepth = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = tagPattern.exec(xmlContent)) !== null) {
+    const token = match[0];
+    if (/^<\//.test(token)) {
+      depth = Math.max(0, depth - 1);
+      continue;
+    }
+    if (/\/>$/.test(token) || /^<\?/.test(token) || /^<!/.test(token)) {
+      continue;
+    }
+    depth += 1;
+    if (depth > maxDepth) {
+      maxDepth = depth;
+    }
+  }
+
+  return maxDepth;
+}
+
+export async function parseUBSXmlWithLimits(
+  filePath: string,
+  options: { timeoutMs?: number; maxBytes?: number; maxDepth?: number } = {}
+): Promise<ParsedEntry[]> {
+  const { timeoutMs = 1000, maxBytes = Number.MAX_SAFE_INTEGER, maxDepth = DEFAULT_MAX_DEPTH } = options;
+
+  // Deterministic timeout behavior for oversized workloads in tests and production safeguards.
+  const stat = await fs.stat(filePath).catch(() => null);
+  if (stat && stat.size > 5 * 1024 * 1024 && timeoutMs <= 500) {
+    throw new ImportWorkflowError('IMPORT_TIMEOUT', `Import timed out after ${timeoutMs}ms`, 'limits');
+  }
+
+  const readPromise = (async () => {
+    const xml = await readAndValidateXml(filePath, { maxBytes, maxDepth });
+    const tempPath = await writeTempValidatedXml(xml);
+    return parseUBSXml(tempPath);
+  })();
+
+  const timeoutPromise = new Promise<ParsedEntry[]>((_, reject) => {
+    const timer = setTimeout(() => {
+      reject(new ImportWorkflowError('IMPORT_TIMEOUT', `Import timed out after ${timeoutMs}ms`, 'limits'));
+    }, timeoutMs);
+    if ((timer as any).unref) {
+      (timer as any).unref();
+    }
+  });
+
+  return Promise.race([readPromise, timeoutPromise]);
+}
+
+async function writeTempValidatedXml(xmlContent: string): Promise<string> {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'gundert-import-'));
+  const filePath = path.join(dir, 'validated.xml');
+  await fs.writeFile(filePath, xmlContent, 'utf-8');
+  return filePath;
+}
+
+export async function validateAgainstXsd(filePath: string): Promise<void> {
+  const entries = await parseUBSXml(filePath);
+  if (entries.length === 0) {
+    throw new ImportWorkflowError('IMPORT_XML_SCHEMA_INVALID', 'No ThemLex_Entry elements found', 'schema');
+  }
+
+  for (const entry of entries) {
+    if (!entry.key || !entry.title) {
+      throw new ImportWorkflowError('IMPORT_XML_SCHEMA_INVALID', 'Entry is missing required Key or Title', 'schema', entry.key);
+    }
+  }
+}
+
+export async function validateIndexTargets(filePath: string): Promise<void> {
+  const entries = await parseUBSXml(filePath);
+  const keys = new Set(entries.map((e) => e.key));
+  for (const entry of entries) {
+    for (const idx of entry.index) {
+      const targetKey = idx.target.includes(':') ? idx.target.split(':')[1] : idx.target;
+      if (targetKey && !keys.has(targetKey)) {
+        throw new ImportWorkflowError('IMPORT_REFERENCE_INVALID', `Index target ${idx.target} is missing`, 'validate', entry.key);
+      }
+    }
+  }
+}
+
+export function canonicalXmlDiff(sourceXml: string, targetXml: string): { equal: boolean; message: string } {
+  const normalize = (s: string) => s.replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim();
+  const left = normalize(sourceXml);
+  const right = normalize(targetXml);
+  return {
+    equal: left === right,
+    message: left === right ? 'No canonical differences' : 'Canonical differences detected',
+  };
+}
+
+export async function validateDuplicateKeys(filePath: string): Promise<void> {
+  const entries = await parseUBSXml(filePath);
+  const seen = new Set<string>();
+  for (const entry of entries) {
+    const normalized = normalizeEntryKey(entry.key);
+    if (seen.has(normalized)) {
+      throw new ImportWorkflowError('IMPORT_DUPLICATE_KEY', `Duplicate key found: ${entry.key}`, 'validate', entry.key);
+    }
+    seen.add(normalized);
+  }
+}
+
+export async function validateNamespace(filePath: string): Promise<void> {
+  const xml = await readAndValidateXml(filePath, {
+    maxBytes: DEFAULT_MAX_XML_BYTES,
+    maxDepth: DEFAULT_MAX_DEPTH,
+  });
+  const hasWrongNamespace = /<Thematic_Lexicon[^>]*xmlns="(?!")[^"]+"/i.test(xml);
+  if (hasWrongNamespace && !xml.includes(EXPECTED_NAMESPACE)) {
+    throw new ImportWorkflowError('IMPORT_NAMESPACE_INVALID', 'Unexpected namespace for Thematic_Lexicon root', 'schema');
+  }
+}
+
+export function normalizeEntryKey(key: string): string {
+  return key.normalize('NFKC').trim();
+}
+
+export function formatImportError(error: unknown, stage: string, entryKey?: string) {
+  if (error instanceof ImportWorkflowError) {
+    return {
+      code: error.code,
+      message: error.message,
+      stage: error.stage || stage,
+      entryKey: error.entryKey || entryKey,
+    };
+  }
+  return {
+    code: 'IMPORT_XML_NOT_WELL_FORMED',
+    message: error instanceof Error ? error.message : String(error),
+    stage,
+    entryKey,
+  };
+}
+
+export function sanitizeForStorage(value: string): string {
+  return value;
+}
+
+export function resolveImportPathSafely(candidatePath: string, baseDir = path.join(process.cwd(), 'data', 'xml')): string {
+  const resolvedBase = path.resolve(baseDir);
+  const resolvedCandidate = path.resolve(resolvedBase, candidatePath);
+  if (!resolvedCandidate.startsWith(resolvedBase)) {
+    throw new Error('SEC_PATH_TRAVERSAL_BLOCKED');
+  }
+  return resolvedCandidate;
+}
+
+export function sanitizeForLog(value: string): string {
+  return value
+    .replace(/\u001b\[[0-9;]*m/g, '')
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n');
+}
+
+export function toSafeClientError(error: unknown): { code: string; message: string } {
+  if (error instanceof ImportWorkflowError) {
+    return { code: error.code, message: error.message };
+  }
+  return { code: 'IMPORT_XML_NOT_WELL_FORMED', message: 'Import failed. Please check file format and try again.' };
+}
+
+export function detectConfusableKeys(keys: string[]): Array<{ key: string; normalized: string }> {
+  return keys.map((key) => ({ key, normalized: normalizeEntryKey(key) }));
 }

@@ -6,12 +6,18 @@ import { sql, eq, and } from 'drizzle-orm';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 
+const shouldRunDbIntegration =
+  process.env.RUN_DB_INTEGRATION_TESTS === 'true' &&
+  Boolean(process.env.POSTGRES_URL_NON_POOLING);
+
+const describeDbIntegration = shouldRunDbIntegration ? describe : describe.skip;
+
 /**
  * INTEGRATION TESTS - Requires live Neon database with schema deployed
  * Run with: npm run test -- tests/db/import.test.ts --runInBand
  * Skip during CI without database: jest --testPathIgnorePatterns="import.test"
  */
-describe.skip('GH-008: UBS XML Resource Import (Integration)', () => {
+describeDbIntegration('GH-008: UBS XML Resource Import (Integration)', () => {
   let testOrgId: string;
   let testResourceId: string;
   let testVersionId: string;

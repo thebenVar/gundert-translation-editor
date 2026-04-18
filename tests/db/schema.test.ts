@@ -3,6 +3,12 @@ import { db } from '@/lib/db';
 import { sql } from 'drizzle-orm';
 import * as schema from '@/lib/db/schema';
 
+const shouldRunDbIntegration =
+  process.env.RUN_DB_INTEGRATION_TESTS === 'true' &&
+  Boolean(process.env.POSTGRES_URL_NON_POOLING);
+
+const describeDbIntegration = shouldRunDbIntegration ? describe : describe.skip;
+
 /**
  * INTEGRATION TESTS - Requires live Neon database with schema deployed
  * 
@@ -15,7 +21,7 @@ import * as schema from '@/lib/db/schema';
  * Skip these during CI without database:
  *   jest --testPathIgnorePatterns="schema.test"
  */
-describe.skip('GH-011: Database Schema + Access + Constraints + Types + Encoding', () => {
+describeDbIntegration('GH-011: Database Schema + Access + Constraints + Types + Encoding', () => {
   
   // ============================================================================
   // GROUP 1: Schema Structure - All 10 Tables Exist
