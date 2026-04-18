@@ -13,7 +13,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('[AUTH] Authorize called with credentials:', {
+          email: credentials?.email,
+          hasPassword: !!credentials?.password,
+        });
+
         if (!credentials?.email || !credentials?.password) {
+          console.log('[AUTH] Missing email or password');
           return null;
         }
 
@@ -22,23 +28,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             where: eq(users.email, credentials.email as string),
           });
 
+          console.log('[AUTH] User query result:', { found: !!user, email: user?.email });
+
           if (!user) {
+            console.log('[AUTH] User not found for email:', credentials.email);
             return null;
           }
 
           // TODO: implement password hashing/verification with bcrypt
           // For demo: accept the demo password
-          if (credentials.password !== 'Demo@2026!') {
+          const passwordMatch = credentials.password === 'Demo@2026!';
+          console.log('[AUTH] Password match:', passwordMatch);
+
+          if (!passwordMatch) {
+            console.log('[AUTH] Invalid password for email:', credentials.email);
             return null;
           }
 
+          console.log('[AUTH] Authorization successful for:', credentials.email);
           return {
             id: user.id,
             email: user.email,
-            name: user.display_name ?? user.email,
+            name: user.name ?? user.email,
           };
         } catch (error) {
-          console.error('Auth error:', error);
+          console.error('[AUTH] Authorization error:', error);
           return null;
         }
       },

@@ -71,18 +71,13 @@ export const users = pgTable(
   'users',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    email: varchar('email', { length: 255 }).notNull().unique(),
-    password_hash: varchar('password_hash', { length: 255 }).notNull(),
-    display_name: varchar('display_name', { length: 255 }),
-    preferred_language: varchar('preferred_language', { length: 10 }).default('ml'),
-    created_at: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-    deleted_at: timestamp('deleted_at', { withTimezone: true }),
-  },
-  (table) => ({
-    emailIdx: uniqueIndex('users_email_idx').on(table.email),
-  })
+    email: text('email').notNull().unique(),
+    password: text('password'),
+    name: text('name'),
+    created_at: timestamp('created_at', { withTimezone: true }),
+  }
 );
+
 
 // ============================================================================
 // TABLE 3: org_memberships
