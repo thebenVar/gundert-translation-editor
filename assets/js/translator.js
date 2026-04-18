@@ -396,14 +396,10 @@
 
     function refreshProviderPicker() {
         if (!el.mtProviderSelect) return;
-
-        const hasOpenAiKey = Boolean(getRuntimeProviderKey('openai-compatible'));
-        const hasGeminiKey = Boolean(getRuntimeProviderKey('gemini'));
-
         const options = [
             { value: 'demo', label: 'Demo (local, no API)', enabled: true },
-            { value: 'openai-compatible', label: 'OpenAI-compatible API', enabled: hasOpenAiKey },
-            { value: 'gemini', label: 'Gemini', enabled: hasGeminiKey }
+            { value: 'openai-compatible', label: 'OpenAI-compatible API', enabled: true },
+            { value: 'gemini', label: 'Gemini', enabled: true }
         ].filter((o) => o.enabled);
 
         el.mtProviderSelect.innerHTML = options
@@ -1311,11 +1307,10 @@
 
     async function translateTextWithOpenAICompatible(text, context) {
         const baseUrl = String(state.mtBaseUrl || '').replace(/\/$/, '');
-        if (!baseUrl) {
+        const hasApiKey = Boolean(String(state.mtApiKey || '').trim());
+
+        if (hasApiKey && !baseUrl) {
             throw new Error('Missing API base URL.');
-        }
-        if (!state.mtApiKey) {
-            throw new Error('Missing API key. Add it in API Key field.');
         }
         if (!state.mtModel) {
             throw new Error('Missing model name.');
@@ -1351,37 +1346,55 @@
             'Do not add commentary.'
         ].join(' ');
 
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${state.mtApiKey}`
-        };
-        if (state.mtProvider === 'gemini') {
-            headers['x-goog-api-key'] = state.mtApiKey;
-        }
-
         const protectedPayload = protectMnemonicTokens(text);
 
-        const response = await fetch(`${baseUrl}/chat/completions`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-                model: state.mtModel,
-                temperature: 0.2,
-                response_format: { type: 'json_object' },
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    {
-                        role: 'user',
-                        content: JSON.stringify({
-                            objective: 'Translate dictionary content preserving structure and protected tokens.',
-                            target_language: state.targetLang,
-                            context,
-                            source_text: protectedPayload.protectedText
-                        })
-                    }
-                ]
-            })
-        });
+        const requestPayload = {
+            model: state.mtModel,
+            temperature: 0.2,
+            response_format: { type: 'json_object' },
+            messages: [
+                { role: 'system', content: systemPrompt },
+                {
+                    role: 'user',
+                    content: JSON.stringify({
+                        objective: 'Translate dictionary content preserving structure and protected tokens.',
+                        target_language: state.targetLang,
+                        context,
+                        source_text: protectedPayload.protectedText
+                    })
+                }
+            ]
+        };
+
+        let response;
+        if (hasApiKey) {
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${state.mtApiKey}`
+            };
+            if (state.mtProvider === 'gemini') {
+                headers['x-goog-api-key'] = state.mtApiKey;
+            }
+
+            response = await fetch(`${baseUrl}/chat/completions`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(requestPayload)
+            });
+        } else {
+            response = await fetch('/api/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    provider: state.mtProvider,
+                    baseUrl,
+                    model: state.mtModel,
+                    payload: requestPayload
+                })
+            });
+        }
 
         if (!response.ok) {
             const body = await response.text();

@@ -124,12 +124,11 @@
 
             <label for="mtApiKey">API Key (in-memory only)</label>
             <input id="mtApiKey" type="password" autocomplete="off" placeholder="sk-...">
-            <div class="tw-field-note">API key is used only for this tab session and is never persisted to localStorage or export files.</div>
+            <div class="tw-field-note">Optional for local use. On Vercel, server-side env keys are used automatically if this field is empty.</div>
         </section>
     </aside>
 
     <script src="../data/entries.js"></script>
-    <script src="../assets/js/translator.runtime-config.js"></script>
     <script src="../assets/js/translator.js"></script>
 </body>
 </html>
