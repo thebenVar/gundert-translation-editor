@@ -108,8 +108,8 @@ export function detectReferenceFormat(query: string): ReferenceFormat {
     return 'mnemonic';
   }
 
-  // USFM: 3 uppercase letters + space + digits:digits (e.g., JHN 3:16)
-  if (/^[A-Z]{3}\s+\d+:\d+$/i.test(trimmed)) {
+  // USFM: optional digit + 2-3 uppercase letters + space + digits:digits (e.g., JHN 3:16, 1CH 1:1, 2CO 3:16)
+  if (/^[0-9]?[A-Z]{2,3}\s+\d+:\d+$/i.test(trimmed)) {
     return 'usfm';
   }
 
