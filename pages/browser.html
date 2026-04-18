@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Browser - UBS Dictionaries</title>
+    <link rel="stylesheet" href="../assets/css/browser.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html" class="btn-back">&larr; Back to Dashboard</a>
+            
+            <!-- Search Mode Toggle -->
+            <div style="display: flex; gap: 6px; margin-bottom: 10px; font-size: 0.75rem;">
+                <button id="searchModeEntries" class="search-mode-btn active" type="button" title="Search by entry title or key">Entries</button>
+                <button id="searchModeReferences" class="search-mode-btn" type="button" title="Search by Bible reference (e.g., John 3:16)">Bible Refs</button>
+            </div>
+            
+            <input type="text" id="search" class="search-box" placeholder="Search entries...">
+
+            <div class="translation-view-controls">
+                <div class="translation-view-toggle" role="tablist" aria-label="Browser content mode">
+                    <button id="viewSourceBtn" class="translation-view-btn active" type="button" data-content-view="source">Source</button>
+                    <button id="viewTargetBtn" class="translation-view-btn" type="button" data-content-view="target">Target</button>
+                </div>
+                <select id="targetLangSelect" class="cat-select" aria-label="Target translation language">
+                    <option value="ml" selected>Malayalam (ml)</option>
+                    <option value="fr">French (fr)</option>
+                    <option value="es">Spanish (es)</option>
+                    <option value="pt">Portuguese (pt)</option>
+                    <option value="de">German (de)</option>
+                    <option value="sw">Swahili (sw)</option>
+                </select>
+            </div>
+
+            <!-- Filter Panel -->
+            <div class="filter-panel">
+                <div class="filter-row-label">
+                    Dictionary
+                    <button id="clearFilters" class="filter-clear-btn" type="button" title="Clear all filters">X Clear</button>
+                </div>
+                <div class="dict-pills" id="dictPills">
+                    <button class="dict-pill active" data-dict="" type="button">All</button>
+                    <button class="dict-pill" data-dict="fauna" type="button">Fauna</button>
+                    <button class="dict-pill" data-dict="flora" type="button">Flora</button>
+                    <button class="dict-pill" data-dict="realia" type="button">Realia</button>
+                </div>
+                <div class="filter-row-label">Category</div>
+                <select id="catSelect" class="cat-select" aria-label="Filter by category">
+                    <option value="">All categories</option>
+                </select>
+                <div id="scopeTagContainer"></div>
+            </div>
+
+            <div id="count" style="font-size: 0.8rem; color: #888; margin-top: 8px;">Loading entries...</div>
+            <a href="translator.html" class="bibles-settings-btn" style="text-decoration: none;">Translation Workbench</a>
+            <button id="bibleSettingsBtn" class="bibles-settings-btn is-hidden" type="button">Bible Versions</button>
+        </div>
+        <div class="entry-list" id="entryList"></div>
+    </div>
+    
+    <div class="main-content">
+        <div id="viewer" class="entry-viewer">
+            <div class="welcome-msg">
+                <h1>Bible Dictionary Entry Browser</h1>
+                <p>Select an entry from the sidebar to view its source content.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bible Viewer Panel (Phase 1) -->
+    <aside id="bibleViewer" class="bible-viewer is-hidden" role="complementary" aria-label="Bible Reference Viewer">
+        <div class="bv-header">
+            <span class="bv-ref-label" id="bvRefLabel">Bible Viewer</span>
+            <button id="bvClose" class="viewer-tool-btn" type="button" title="Close viewer">X</button>
+        </div>
+        <div class="bv-cards" id="bvCards">
+            <div class="bv-empty">Click a reference chip to view Bible text.</div>
+        </div>
+    </aside>
+
+    <!-- Bible Settings Panel (Phase 2) -->
+    <aside id="bibleSettings" class="bible-settings is-hidden" role="dialog" aria-label="Bible Version Settings" aria-modal="true">
+        <div class="bs-header">
+            <span class="bs-title">Bible Versions</span>
+            <button id="bsClose" class="viewer-tool-btn" type="button">X</button>
+        </div>
+        <div class="bs-body">
+            <div id="bsContent"></div>
+        </div>
+    </aside>
+
+    <!-- Bypass CORS restriction by loading data as a local script -->
+    <script src="../data/entries.js"></script>
+
+    <script src="../assets/js/browser.js"></script>
+</body>
+</html>
+

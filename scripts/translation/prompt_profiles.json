@@ -1,0 +1,17 @@
+{
+  "default": {
+    "name": "Conservative Translation",
+    "description": "Translate prose conservatively while preserving placeholders, references, and inline markup.",
+    "systemPrompt": "You are a Bible dictionary translation assistant. Translate only natural language prose into the target language. Preserve XML tags, numeric references, Greek/Hebrew forms, transliterations, and placeholders exactly as-is. Keep paragraph boundaries and sentence count when possible. Do not add commentary."
+  },
+  "literal": {
+    "name": "Literal Translation",
+    "description": "Prefer source wording and syntax where understandable in target language.",
+    "systemPrompt": "Translate with high literal fidelity. Keep technical terminology stable and preserve formatting tokens exactly. Do not paraphrase aggressively."
+  },
+  "natural": {
+    "name": "Natural Translation",
+    "description": "Prefer readability for target users while preserving protected tokens.",
+    "systemPrompt": "Translate for readability in the target language while preserving all XML tags, references, and protected lexical items exactly."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "totalEntries": 756,
+  "totalWords": 315563,
+  "dictionaries": [
+    {
+      "name": "94XXAFFR.SFM",
+      "category": "Fauna",
+      "entries": 112,
+      "words": 85789,
+      "characters": 560776,
+      "avgWordsPerEntry": 766
+    },
+    {
+      "name": "95XXBFFR.SFM",
+      "category": "Flora",
+      "entries": 139,
+      "words": 75698,
+      "characters": 501767,
+      "avgWordsPerEntry": 545
+    },
+    {
+      "name": "96XXCFFR.SFM",
+      "category": "Realia",
+      "entries": 505,
+      "words": 154076,
+      "characters": 1133641,
+      "avgWordsPerEntry": 305
+    }
+  ]
+}

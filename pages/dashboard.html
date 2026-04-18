@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Project Dashboard - UBS Dictionaries</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #f4f7f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { color: #2c3e50; font-size: 2.5rem; }
+        
+        /* Summary Metrics */
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
+        .card h2 { margin: 0; font-size: 0.9rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; }
+        .card p { margin: 10px 0 0; font-size: 2.2rem; font-weight: bold; color: #2980b9; }
+
+        /* File Links & Intro */
+        .dict-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .dict-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: transform 0.2s; border-top: 6px solid #333; }
+        .dict-card:hover { transform: translateY(-5px); }
+        .dict-card h2 { margin-top: 0; color: #2c3e50; font-size: 1.8rem; }
+        .dict-intro { color: #666; font-size: 0.95rem; line-height: 1.6; margin: 15px 0; flex-grow: 1; font-style: italic; }
+        .btn-link { align-self: flex-start; padding: 12px 25px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+        .btn-link:hover { background: #2980b9; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); }
+
+        /* Hierarchical Distribution */
+        .distribution-section { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 50px; }
+        .distribution-section h2 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+        .dist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        
+        .tree-view { font-size: 0.9rem; max-height: 600px; overflow-y: auto; padding-right: 15px; }
+        .tree-node { margin-bottom: 10px; }
+        .tree-parent { font-weight: bold; color: #2c3e50; display: flex; justify-content: space-between; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; }
+        .tree-children { padding-left: 20px; border-left: 1px dashed #ccc; margin-top: 5px; }
+        .tree-child { display: flex; justify-content: space-between; padding: 4px 10px; color: #666; font-size: 0.85rem; }
+        .tree-child-link { text-decoration: none; color: inherit; border-radius: 6px; transition: 0.2s; }
+        .tree-child-link:hover { background: #eef5ff; color: #1f3e63; }
+        .tree-parent-link { text-decoration: none; color: inherit; border-radius: 6px; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .tree-parent-link:hover { background: #eef5ff; }
+        .word-badge { background: #3498db; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
+        .word-badge-sub { background: #95a5a6; }
+
+        footer { text-align: center; color: #95a5a6; font-size: 0.9rem; padding: 40px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Big Picture Project Overview</h1>
+            <p>UBS Resources Bible Dictionary Translation Tracker</p>
+            <a href="browser.html" class="btn-link" style="margin-top: 20px; background: #2c3e50; display: inline-block;">Open Entry Browser</a>
+        </header>
+
+        <div class="summary-cards" id="summary"></div>
+
+        <div class="dict-links" id="dictLinks"></div>
+
+        <div class="distribution-section">
+            <h2>Word Distribution: Categories & Subcategories</h2>
+            <div class="dist-grid">
+                <div class="chart-box">
+                    <canvas id="distChart"></canvas>
+                </div>
+                <div class="tree-view" id="treeView"></div>
+            </div>
+        </div>
+
+        <footer>© 2026 UBS Resources • Data extracted from XML sources</footer>
+    </div>
+
+    <script src="../data/entries.js"></script>
+    <script>
+        const dictionaryMeta = {
+            Fauna: {
+                color: '#3498db',
+                link: 'fauna.html',
+                intro: 'Animals, birds, snakes, insects, and other creatures found in biblical contexts, with translation guidance and references.'
+            },
+            Flora: {
+                color: '#2ecc71',
+                link: 'flora.html',
+                intro: 'Trees, shrubs, crops, and plant terms in Scripture, including identification and translation choices.'
+            },
+            Realia: {
+                color: '#9b59b6',
+                link: 'realia.html',
+                intro: 'Cultural objects, tools, buildings, and social-historical artifacts used throughout the biblical world.'
+            }
+        };
+
+        function keyToSegments(key) {
+            return (key || '')
+                .split('.')
+                .map(part => parseInt(part, 10))
+                .filter(num => Number.isFinite(num));
+        }
+
+        function compareKeys(a, b) {
+            const aSeg = keyToSegments(a);
+            const bSeg = keyToSegments(b);
+            const max = Math.max(aSeg.length, bSeg.length);
+
+            for (let i = 0; i < max; i++) {
+                const av = aSeg[i] ?? -1;
+                const bv = bSeg[i] ?? -1;
+                if (av !== bv) {
+                    return av - bv;
+                }
+            }
+
+            return a.length - b.length;
+        }
+
+        function findParentKey(key, keySet) {
+            const segments = (key || '').split('.');
+            while (segments.length > 1) {
+                segments.pop();
+                const candidate = segments.join('.');
+                if (keySet.has(candidate)) {
+                    return candidate;
+                }
+            }
+            return null;
+        }
+
+        function buildHierarchy(entries) {
+            const sorted = [...entries].sort((a, b) => compareKeys(a.key, b.key));
+            const keySet = new Set(sorted.map(entry => entry.key));
+            const nodesByKey = new Map();
+
+            sorted.forEach((entry) => {
+                nodesByKey.set(entry.key, {
+                    key: entry.key,
+                    title: entry.title,
+                    words: Number(entry.wordCount) || 0,
+                    children: []
+                });
+            });
+
+            const roots = [];
+            sorted.forEach((entry) => {
+                const node = nodesByKey.get(entry.key);
+                const parentKey = findParentKey(entry.key, keySet);
+                if (!parentKey) {
+                    roots.push(node);
+                    return;
+                }
+                const parent = nodesByKey.get(parentKey);
+                parent.children.push(node);
+            });
+
+            return roots;
+        }
+
+        function renderHierarchyNode(node, category, level = 0) {
+            const href = `browser.html?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(node.title)}&key=${encodeURIComponent(node.key)}`;
+            const badgeClass = level === 0 ? 'word-badge' : 'word-badge word-badge-sub';
+            let html = `
+                <div class="tree-node">
+                    <a class="tree-parent tree-parent-link" href="${href}" title="Open ${node.title} entries">
+                        <span>${node.title}</span>
+                        <span class="${badgeClass}">${node.words.toLocaleString()}</span>
+                    </a>
+            `;
+
+            if (node.children.length > 0) {
+                html += '<div class="tree-children">';
+                node.children.forEach((child) => {
+                    html += renderHierarchyNode(child, category, level + 1);
+                });
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function initDashboard() {
+            if (typeof ALL_DICTIONARY_ENTRIES === 'undefined') {
+                document.getElementById('treeView').innerHTML = '<div style="color:#b00; padding:10px;">Error: entries.js not loaded.</div>';
+                return;
+            }
+
+            const entries = ALL_DICTIONARY_ENTRIES;
+            const totalWords = entries.reduce((sum, entry) => sum + (Number(entry.wordCount) || 0), 0);
+            const categoryMap = new Map();
+
+            entries.forEach((entry) => {
+                const category = entry.category || 'Uncategorized';
+                if (!categoryMap.has(category)) {
+                    categoryMap.set(category, []);
+                }
+                categoryMap.get(category).push(entry);
+            });
+
+            const categories = [...categoryMap.keys()].sort((a, b) => a.localeCompare(b));
+
+            document.getElementById('summary').innerHTML = `
+                <div class="card"><h2>Total Project Words</h2><p>${totalWords.toLocaleString()}</p></div>
+                <div class="card"><h2>Total Entries</h2><p>${entries.length.toLocaleString()}</p></div>
+                <div class="card"><h2>Asset Library</h2><p>data/images/</p></div>
+                <div class="card"><h2>Dictionary Count</h2><p>${categories.length}</p></div>
+            `;
+
+            const linksBox = document.getElementById('dictLinks');
+            const treeBox = document.getElementById('treeView');
+            linksBox.innerHTML = '';
+            treeBox.innerHTML = '';
+
+            const chartLabels = [];
+            const chartValues = [];
+            const chartBackground = [];
+            const chartBorders = [];
+
+            categories.forEach((category) => {
+                const categoryEntries = categoryMap.get(category);
+                const categoryWords = categoryEntries.reduce((sum, entry) => sum + (Number(entry.wordCount) || 0), 0);
+                const meta = dictionaryMeta[category] || { color: '#7f8c8d', link: 'browser.html', intro: 'Dictionary entries and lexical resources.' };
+
+                linksBox.innerHTML += `
+                    <div class="dict-card" style="border-top-color: ${meta.color}">
+                        <h2>${category} Dictionary</h2>
+                        <div class="dict-intro">${meta.intro}</div>
+                        <a href="${meta.link}" class="btn-link">View Details & Tracker</a>
+                    </div>
+                `;
+
+                const roots = buildHierarchy(categoryEntries);
+                let categoryHtml = `
+                    <div class="tree-node">
+                        <div class="tree-parent" style="background: ${meta.color}15; border-left: 4px solid ${meta.color}">
+                            ${category}
+                            <span class="word-badge">${categoryWords.toLocaleString()}</span>
+                        </div>
+                        <div class="tree-children">
+                `;
+
+                roots.forEach((node) => {
+                    categoryHtml += renderHierarchyNode(node, category, 0);
+                });
+
+                categoryHtml += '</div></div>';
+                treeBox.innerHTML += categoryHtml;
+
+                chartLabels.push(category);
+                chartValues.push(categoryWords);
+                chartBackground.push(`${meta.color}88`);
+                chartBorders.push(meta.color);
+            });
+
+            new Chart(document.getElementById('distChart'), {
+                type: 'polarArea',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data: chartValues,
+                        backgroundColor: chartBackground,
+                        borderColor: chartBorders
+                    }]
+                },
+                options: { plugins: { title: { display: true, text: 'Overall Word Volume Balance' } } }
+            });
+        }
+
+        initDashboard();
+    </script>
+</body>
+</html>

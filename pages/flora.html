@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flora Dictionary - Detailed Breakdown</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #f4f7f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back { text-decoration: none; color: #2ecc71; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; margin-bottom: 40px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        th { background: #f8f9fa; color: #7f8c8d; text-transform: uppercase; font-size: 0.8rem; }
+        .chapter-row { background: #fdfdfd; font-weight: bold; color: #27ae60; }
+        .sub-row { color: #555; }
+        .complexity-bar { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .complexity-fill { height: 100%; background: #2ecc71; }
+        footer { text-align: center; margin-top: 50px; color: #95a5a6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Flora Dictionary Deep-Dive</h1>
+            <a href="../index.html" class="btn-back">← Back to Master</a>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Workload Profile</h3>
+                <canvas id="typeChart"></canvas>
+            </div>
+            <div class="card">
+                <h3>Flora Metrics</h3>
+                <p><strong>Total Words:</strong> 77,916</p>
+                <p><strong>Total Entries:</strong> 129</p>
+                <p><strong>Illustrations:</strong> 202</p>
+                <p><strong>Avg Complexity:</strong> 604 words per entry</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Flora Categories</h2>
+            <table id="hierarchyTable">
+                <thead><tr><th>Key</th><th>Title</th><th>Words</th><th>Volume</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <footer>UBS Resources • 2026</footer>
+    </div>
+
+    <script>
+        const data = {
+  "sectionAnalysis": { "discussion": 22622, "translation": 23835, "description": 7286, "other": 24173 },
+  "chapters": [
+    { "key": "1", "title": "Wild Trees and Shrubs", "words": 16720, "subcategories": [{ "key": "1.6", "title": "Cypress", "words": 1555 }, { "key": "1.21", "title": "Sandalwood", "words": 1463 }] },
+    { "key": "2", "title": "Domestic trees and shrubs", "words": 12392, "subcategories": [{ "key": "2.5", "title": "Date palm", "words": 1226 }, { "key": "2.12", "title": "Vine", "words": 2735 }] },
+    { "key": "3", "title": "Food Plants, Grown and Gathered", "words": 13294 },
+    { "key": "4", "title": "Incense and Ointment", "words": 8771 },
+    { "key": "5", "title": "Plants for Everyday Use", "words": 11799 },
+    { "key": "6", "title": "Flowers, Thorns, and Weeds", "words": 8109 },
+    { "key": "8", "title": "Glossary", "words": 4302 }
+  ]
+};
+        const tbody = document.getElementById('tableBody');
+        data.chapters.forEach(ch => {
+            const p = Math.round((ch.words/77916)*200);
+            tbody.innerHTML += `<tr class="chapter-row"><td>${ch.key}</td><td>${ch.title}</td><td>${ch.words.toLocaleString()}</td><td><div class="complexity-bar"><div class="complexity-fill" style="width: ${p}%"></div></div></td></tr>`;
+            if(ch.subcategories) ch.subcategories.forEach(sub => {
+                tbody.innerHTML += `<tr class="sub-row"><td>${sub.key}</td><td style="padding-left:30px">${sub.title}</td><td>${sub.words.toLocaleString()}</td><td></td></tr>`;
+            });
+        });
+
+        new Chart(document.getElementById('typeChart'), {
+            type: 'doughnut',
+            data: { labels: Object.keys(data.sectionAnalysis), datasets: [{ data: Object.values(data.sectionAnalysis), backgroundColor: ['#27ae60', '#e67e22', '#2ecc71', '#bdc3c7'] }] }
+        });
+    </script>
+</body>
+</html>
