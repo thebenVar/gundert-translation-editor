@@ -1,12 +1,13 @@
 import { db } from './lib/db/index.js';
 import { users } from './lib/db/schema.js';
+import { eq } from 'drizzle-orm';
 
 async function seed() {
   try {
     console.log('Seeding demo user...');
     
     const existingUser = await db.query.users.findFirst({
-      where: (u) => u.email.eq('demo@example.com'),
+      where: eq(users.email, 'demo@example.com'),
     });
 
     if (existingUser) {
@@ -16,8 +17,8 @@ async function seed() {
 
     const newUser = await db.insert(users).values({
       email: 'demo@example.com',
-      name: 'Demo Translator',
-      password: 'password', // TODO: hash this with bcrypt
+      display_name: 'Demo Translator',
+      password_hash: 'password', // TODO: hash this with bcrypt
     }).returning();
 
     console.log('Demo user created:', newUser);

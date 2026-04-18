@@ -14,7 +14,7 @@ export async function GET() {
       // Update the password to a new one
       await db
         .update(users)
-        .set({ password: 'Demo@2026!' })
+        .set({ password_hash: 'Demo@2026!' })
         .where(eq(users.email, 'demo@example.com'));
 
       return NextResponse.json({
@@ -32,8 +32,8 @@ export async function GET() {
       .insert(users)
       .values({
         email: 'demo@example.com',
-        name: 'Demo Translator',
-        password: 'Demo@2026!',
+        display_name: 'Demo Translator',
+        password_hash: 'Demo@2026!',
       })
       .returning();
 

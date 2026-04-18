@@ -25,8 +25,8 @@ export default function SignIn() {
 
       console.log('Sign-in result:', result);
 
-      // Handle both status: 'ok' and no error as success
-      if (!result || (result.error && result.status !== 'ok')) {
+      // Treat any result with an error as failed credentials.
+      if (!result || result.error) {
         setError(result?.error || 'Invalid email or password');
         return;
       }

@@ -13,7 +13,7 @@
  */
 
 import { db } from '@/lib/db';
-import { resources, resourceVersions, resourceEntries } from '@/lib/db/schema';
+import { organizations, resources, resourceVersions, resourceEntries } from '@/lib/db/schema';
 import { sql, eq, and } from 'drizzle-orm';
 import { parseUBSXml, ParsedEntry } from '@/lib/xml-parser/parser';
 import * as path from 'path';
@@ -93,13 +93,13 @@ async function importUBSResources(): Promise<void> {
 async function getOrCreateOrganization() {
   let org = await db
     .select()
-    .from(resources)
+    .from(organizations)
     .limit(1);
 
   if (org.length === 0) {
     // Create default org
     const inserted = await db
-      .insert(resources)
+      .insert(organizations)
       .values({
         name: 'Translation Feedback BF',
         slug: 'tfbf',
@@ -114,7 +114,7 @@ async function getOrCreateOrganization() {
   // Get the org that owns these resources
   const result = await db
     .select()
-    .from(resources)
+    .from(organizations)
     .limit(1);
 
   return result[0];
