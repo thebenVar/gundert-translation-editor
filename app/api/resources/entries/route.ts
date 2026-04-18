@@ -1,13 +1,26 @@
 import { NextResponse } from 'next/server';
-import { fetchEntryList } from '@/lib/browser/entry-list';
+import {
+  buildEntryListQueryOptions,
+  fetchEntryListWithStatus,
+  parseStatusFromQuery,
+} from '@/lib/browser/entry-list';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const page = searchParams.get('page');
-  const lang = searchParams.get('lang') ?? 'ml';
+  const options = buildEntryListQueryOptions({
+    page: searchParams.get('page'),
+    lang: searchParams.get('lang'),
+    status: parseStatusFromQuery(searchParams.get('status')),
+    pageSize: 50,
+  });
 
   try {
-    const result = await fetchEntryList(page, lang, 50);
+    const result = await fetchEntryListWithStatus(
+      options.pageParam,
+      options.targetLanguage,
+      options.status,
+      options.pageSize
+    );
 
     return NextResponse.json(result, {
       headers: {

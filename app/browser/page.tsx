@@ -1,15 +1,67 @@
 import Link from 'next/link';
-import { fetchEntryList } from '@/lib/browser/entry-list';
+import {
+  ALL_TRANSLATION_STATUSES,
+  fetchEntryListWithStatus,
+  parseStatusFromQuery,
+  serializeStatusToQuery,
+  type TranslationStatus,
+} from '@/lib/browser/entry-list';
 
 type BrowserPageProps = {
   searchParams?: Record<string, string | string[] | undefined>;
 };
 
-export default async function BrowserPage({ searchParams }: BrowserPageProps) {
-  const pageParam = searchParams?.page;
-  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam ?? '1';
+const STATUS_LABELS: Record<TranslationStatus, string> = {
+  untranslated: 'Untranslated',
+  draft: 'Draft',
+  ready_for_review: 'Ready for Review',
+  approved: 'Approved',
+};
 
-  const result = await fetchEntryList(page, 'ml', 50).catch(() => ({
+function statusBgClass(status: TranslationStatus): string {
+  if (status === 'approved') return 'bg-emerald-100 text-emerald-900';
+  if (status === 'ready_for_review') return 'bg-sky-100 text-sky-900';
+  if (status === 'draft') return 'bg-amber-100 text-amber-900';
+  return 'bg-slate-200 text-slate-900';
+}
+
+function normalizeSearchParam(value: string | string[] | undefined): string | null {
+  if (Array.isArray(value)) return value[0] ?? null;
+  return value ?? null;
+}
+
+function buildBrowserHref(page: number, statuses: TranslationStatus[]): string {
+  const queryParts = [`page=${page}`];
+  const statusQuery = serializeStatusToQuery(statuses);
+  if (statusQuery) queryParts.push(statusQuery);
+  return `/browser?${queryParts.join('&')}`;
+}
+
+function toggleStatus(statuses: TranslationStatus[], nextStatus: TranslationStatus): TranslationStatus[] {
+  const has = statuses.includes(nextStatus);
+  if (has) {
+    const remaining = statuses.filter((status) => status !== nextStatus);
+    return remaining.length > 0 ? remaining : [...ALL_TRANSLATION_STATUSES];
+  }
+
+  return [...statuses, nextStatus];
+}
+
+function getNeedsWorkStatuses(): TranslationStatus[] {
+  return ['untranslated', 'draft'];
+}
+
+function hasNeedsWork(statuses: TranslationStatus[]): boolean {
+  const target = getNeedsWorkStatuses();
+  return target.every((status) => statuses.includes(status));
+}
+
+export default async function BrowserPage({ searchParams }: BrowserPageProps) {
+  const pageParam = normalizeSearchParam(searchParams?.page);
+  const statusParam = normalizeSearchParam(searchParams?.status);
+  const activeStatuses = parseStatusFromQuery(statusParam);
+
+  const result = await fetchEntryListWithStatus(pageParam, 'ml', activeStatuses, 50).catch(() => ({
     entries: [],
     page: 1,
     pageSize: 50,
@@ -25,6 +77,36 @@ export default async function BrowserPage({ searchParams }: BrowserPageProps) {
           Browse imported entries across all resources ({result.total} total)
         </p>
       </header>
+
+      <section className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3" aria-label="translation-status-filter-mobile">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">Status filters</p>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={buildBrowserHref(1, getNeedsWorkStatuses())}
+            className={`rounded-full border px-3 py-1 text-xs font-medium ${
+              hasNeedsWork(activeStatuses)
+                ? 'border-amber-300 bg-amber-100 text-amber-900'
+                : 'border-slate-300 bg-white text-slate-700'
+            }`}
+          >
+            Needs Work
+          </Link>
+          {ALL_TRANSLATION_STATUSES.map((status) => {
+            const active = activeStatuses.includes(status);
+            return (
+              <Link
+                key={`mobile-${status}`}
+                href={buildBrowserHref(1, toggleStatus(activeStatuses, status))}
+                className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                  active ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-300 bg-white text-slate-700'
+                }`}
+              >
+                {STATUS_LABELS[status]}
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="space-y-3" aria-label="entry-list">
         {result.entries.map((entry) => (
@@ -42,8 +124,8 @@ export default async function BrowserPage({ searchParams }: BrowserPageProps) {
               <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
                 {entry.matchType}
               </span>
-              <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-900">
-                {entry.translationStatus}
+              <span className={`rounded px-2 py-0.5 text-xs font-medium ${statusBgClass(entry.translationStatus)}`}>
+                {STATUS_LABELS[entry.translationStatus]}
               </span>
             </div>
 
@@ -67,7 +149,7 @@ export default async function BrowserPage({ searchParams }: BrowserPageProps) {
         </p>
         {result.hasMore ? (
           <Link
-            href={`/browser?page=${result.page + 1}`}
+            href={buildBrowserHref(result.page + 1, activeStatuses)}
             className="rounded bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700"
           >
             Load more
