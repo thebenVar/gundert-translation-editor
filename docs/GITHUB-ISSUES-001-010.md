@@ -74,7 +74,7 @@ Translators need fast, unified search to jump directly to entries without mode t
 
 - [ ] Single unified search box — no mode toggle
 - [ ] Search covers: entry key, title, indexed source content snippets, Bible references
-- [ ] Bible references matched in both human-readable (`John 3:16`) and mnemonic (`JHN 3:16`) forms
+- [ ] Bible references matched in human-readable (`John 3:16`), USFM notation (`JHN 3:16`), and mnemonic numeric (`04400301600005`) forms
 - [ ] Results debounced (300ms) — no search triggered on every keystroke
 - [ ] Results ranked: exact key → exact title → prefix title → exact ref → content snippet → resource priority → alpha title
 - [ ] Each result card shows the match field type (key / title / content / reference) as a badge
@@ -82,7 +82,7 @@ Translators need fast, unified search to jump directly to entries without mode t
 
 ### Notes
 
-- **Future expansion (Phase 2+)**: Bible references in vernacular languages (e.g., local language scripture reference format). For Phase 1, only store and match English mnemonics and human-readable forms.
+- **Future expansion (Phase 2+)**: Bible references in vernacular languages (e.g., local language scripture reference format). For Phase 1, only store and match human-readable, USFM notation, and mnemonic numeric forms.
 
 ### Related Tasks
 

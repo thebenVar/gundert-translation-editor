@@ -177,9 +177,10 @@ Related References:
    - indexed source content snippets
    - Bible references
 - Query results can be narrowed further by translation status filter.
-- Bible references are matched using both:
+- Bible references are matched using all three formats:
    - human-readable forms (example: John 3:16)
-   - source mnemonic forms stored in data
+   - USFM notation (example: JHN 3:16)
+   - mnemonic numeric forms stored in source data (example: 04400301600005)
 - Result cards show match context and field type (key/title/content/reference) to reduce ambiguity.
 
 This replaces separate Entries vs Bible Refs modes for a simpler and faster user workflow.
