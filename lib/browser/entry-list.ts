@@ -1,5 +1,18 @@
 import { sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
+import type { ParsedEntry } from '@/lib/xml-parser/parser';
+
+export type EntryDetail = {
+  id: string;
+  entryKey: string;
+  resourceName: string;
+  resourceSlug: string;
+  resourceVersion: string;
+  sourceLanguage: string;
+  translationStatus: TranslationStatus;
+  sourceContent: ParsedEntry & Record<string, unknown>;
+  updatedAt: string;
+};
 
 export const ALL_TRANSLATION_STATUSES = [
   'untranslated',
@@ -15,6 +28,8 @@ export type EntryListItem = {
   entryKey: string;
   title: string;
   resourceBadge: string;
+  resourceSlug: string;
+  resourceVersion: string;
   matchType: 'browse' | 'key' | 'title' | 'content' | 'reference';
   translationStatus: TranslationStatus;
   updatedAt: string;
@@ -351,6 +366,8 @@ export function normalizeEntryListRow(row: any): EntryListItem {
     entryKey: String(row.entry_key),
     title: String(row.title ?? row.entry_key),
     resourceBadge: String(row.resource_name ?? 'Unknown Resource'),
+    resourceSlug: String(row.resource_slug ?? ''),
+    resourceVersion: String(row.resource_version ?? '1.0'),
     matchType: 'browse',
     translationStatus: status,
     updatedAt: row.updated_at ? new Date(row.updated_at).toISOString() : new Date(0).toISOString(),
@@ -385,6 +402,8 @@ export async function fetchEntryListWithStatus(
       re.entry_key,
       COALESCE(re.source_content ->> 'title', re.entry_key) AS title,
       r.name AS resource_name,
+      r.slug AS resource_slug,
+      rv.version AS resource_version,
       COALESCE(et.status::text, 'untranslated') AS translation_status,
       re.updated_at,
       r.source AS resource_source
@@ -447,5 +466,66 @@ export async function fetchEntryListWithStatus(
     pageSize: limit,
     total,
     hasMore: offset + entries.length < total,
+  };
+}
+
+/**
+ * Fetch a single entry by resource slug + version + entry key.
+ * Used by /lexicon/[resource]/[version]/[key]
+ */
+export async function fetchEntryBySlugVersionKey(
+  resourceSlug: string,
+  version: string,
+  entryKey: string,
+  targetLanguage = 'ml'
+): Promise<EntryDetail | null> {
+  const result = await db.execute(sql`
+    SELECT
+      re.id,
+      re.entry_key,
+      re.source_content,
+      re.source_language,
+      re.updated_at,
+      r.name AS resource_name,
+      r.slug AS resource_slug,
+      rv.version AS resource_version,
+      COALESCE(et.status::text, 'untranslated') AS translation_status
+    FROM resource_entries re
+    INNER JOIN resource_versions rv ON rv.id = re.resource_version_id
+    INNER JOIN resources r ON r.id = rv.resource_id
+    LEFT JOIN LATERAL (
+      SELECT status
+      FROM entry_translations etx
+      WHERE etx.entry_id = re.id
+        AND etx.target_language = ${targetLanguage}
+        AND etx.deleted_at IS NULL
+      ORDER BY etx.updated_at DESC
+      LIMIT 1
+    ) et ON TRUE
+    WHERE r.slug = ${resourceSlug}
+      AND rv.version = ${version}
+      AND re.entry_key = ${entryKey}
+      AND re.deleted_at IS NULL
+      AND rv.deleted_at IS NULL
+      AND r.deleted_at IS NULL
+    LIMIT 1
+  `);
+
+  const row = result.rows?.[0] as any;
+  if (!row) return null;
+
+  const rawStatus = String(row.translation_status ?? 'untranslated');
+  const status: TranslationStatus = isTranslationStatus(rawStatus) ? rawStatus : 'untranslated';
+
+  return {
+    id: String(row.id),
+    entryKey: String(row.entry_key),
+    resourceName: String(row.resource_name ?? ''),
+    resourceSlug: String(row.resource_slug ?? ''),
+    resourceVersion: String(row.resource_version ?? ''),
+    sourceLanguage: String(row.source_language ?? 'en'),
+    translationStatus: status,
+    sourceContent: row.source_content as EntryDetail['sourceContent'],
+    updatedAt: row.updated_at ? new Date(row.updated_at).toISOString() : new Date(0).toISOString(),
   };
 }

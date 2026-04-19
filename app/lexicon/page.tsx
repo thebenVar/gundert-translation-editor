@@ -179,7 +179,7 @@ export default async function LexiconPage({ searchParams }: PageProps) {
             {result.entries.map((entry) => (
               <Link
                 key={entry.id}
-                href={`/lexicon/${entry.id}`}
+                href={`/lexicon/${entry.resourceSlug}/${entry.resourceVersion}/${entry.entryKey}`}
                 className="group flex items-start justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:border-blue-300 hover:shadow-md"
               >
                 <div className="min-w-0 flex-1">
