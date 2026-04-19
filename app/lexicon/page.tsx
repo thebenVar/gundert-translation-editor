@@ -3,6 +3,7 @@ import {
   ALL_TRANSLATION_STATUSES,
   fetchEntryListWithStatus,
   parseStatusFromQuery,
+  parseResourcesFromQuery,
   serializeStatusToQuery,
   type TranslationStatus,
 } from '@/lib/browser/entry-list';
@@ -11,8 +12,18 @@ import LexiconInfiniteList from './LexiconInfiniteList';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
+
+// ─── Resource definitions ─────────────────────────────────────────────────────
+
+const ALL_RESOURCES = [
+  { slug: 'ubs-fauna', label: 'Fauna' },
+  { slug: 'ubs-flora', label: 'Flora' },
+  { slug: 'ubs-realia', label: 'Realia' },
+] as const;
+
+type ResourceSlug = (typeof ALL_RESOURCES)[number]['slug'];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -43,6 +54,24 @@ function lexiconHref(page: number, statuses: TranslationStatus[], query?: string
   return `/lexicon?${parts.join('&')}`;
 }
 
+function lexiconHrefWithResource(
+  page: number,
+  statuses: TranslationStatus[],
+  resources: string[],
+  query?: string | null
+): string {
+  const parts: string[] = [`page=${page}`];
+  const sq = serializeStatusToQuery(statuses);
+  if (sq) parts.push(sq);
+  if (resources.length > 0) parts.push(`resource=${resources.join(',')}`);
+  if (query) parts.push(`q=${encodeURIComponent(query)}`);
+  return `/lexicon?${parts.join('&')}`;
+}
+
+function toggleResource(active: string[], slug: string): string[] {
+  return active.includes(slug) ? active.filter((s) => s !== slug) : [...active, slug];
+}
+
 function toggle(statuses: TranslationStatus[], next: TranslationStatus): TranslationStatus[] {
   const has = statuses.includes(next);
   if (has) {
@@ -55,12 +84,16 @@ function toggle(statuses: TranslationStatus[], next: TranslationStatus): Transla
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function LexiconPage({ searchParams }: PageProps) {
-  const pageParam = param(searchParams?.page);
-  const statusParam = param(searchParams?.status);
-  const queryParam = param(searchParams?.q);
-  const activeStatuses = parseStatusFromQuery(statusParam);
+  const resolvedSearchParams = (await searchParams) ?? {};
 
-  const result = await fetchEntryListWithStatus(pageParam, 'ml', activeStatuses, 50).catch(() => ({
+  const pageParam = param(resolvedSearchParams.page);
+  const statusParam = param(resolvedSearchParams.status);
+  const queryParam = param(resolvedSearchParams.q);
+  const resourceParam = param(resolvedSearchParams.resource);
+  const activeStatuses = parseStatusFromQuery(statusParam);
+  const activeResources = parseResourcesFromQuery(resourceParam);
+
+  const result = await fetchEntryListWithStatus(pageParam, 'ml', activeStatuses, 50, activeResources).catch(() => ({
     entries: [],
     page: 1,
     pageSize: 50,
@@ -114,13 +147,13 @@ export default async function LexiconPage({ searchParams }: PageProps) {
       <div className="mx-auto max-w-5xl px-4 py-6">
         {/* ── Status filter chips ── */}
         <div className="mb-5 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-slate-500 mr-1">Filter:</span>
+          <span className="text-xs font-medium text-slate-500 mr-1">Status:</span>
 
           {/* All / reset chip */}
           <Link
             href="/lexicon"
             className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-              !isFiltered
+              activeStatuses.length === ALL_TRANSLATION_STATUSES.length && activeResources.length === 0
                 ? 'border-slate-900 bg-slate-900 text-white'
                 : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
             }`}
@@ -130,7 +163,7 @@ export default async function LexiconPage({ searchParams }: PageProps) {
 
           {/* Needs Work shortcut */}
           <Link
-            href={lexiconHref(1, ['untranslated', 'draft'])}
+            href={lexiconHrefWithResource(1, ['untranslated', 'draft'], activeResources, queryParam)}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
               activeStatuses.length === 2 &&
               activeStatuses.includes('untranslated') &&
@@ -149,7 +182,7 @@ export default async function LexiconPage({ searchParams }: PageProps) {
             return (
               <Link
                 key={status}
-                href={lexiconHref(1, toggle(activeStatuses, status))}
+                href={lexiconHrefWithResource(1, toggle(activeStatuses, status), activeResources, queryParam)}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition ring-1 ${
                   active
                     ? `${STATUS_CHIP[status]} ring-current`
@@ -157,6 +190,37 @@ export default async function LexiconPage({ searchParams }: PageProps) {
                 }`}
               >
                 {STATUS_LABELS[status]}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* ── Resource filter chips ── */}
+        <div className="mb-5 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-slate-500 mr-1">Source:</span>
+          <Link
+            href={lexiconHrefWithResource(1, activeStatuses, [], queryParam)}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+              activeResources.length === 0
+                ? 'border-slate-900 bg-slate-900 text-white'
+                : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+            }`}
+          >
+            All
+          </Link>
+          {ALL_RESOURCES.map(({ slug, label }) => {
+            const active = activeResources.includes(slug);
+            return (
+              <Link
+                key={slug}
+                href={lexiconHrefWithResource(1, activeStatuses, toggleResource(activeResources, slug), queryParam)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                  active
+                    ? 'border-blue-600 bg-blue-600 text-white'
+                    : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                }`}
+              >
+                {label}
               </Link>
             );
           })}
@@ -170,6 +234,7 @@ export default async function LexiconPage({ searchParams }: PageProps) {
           total={result.total}
           activeStatuses={activeStatuses}
           query={queryParam}
+          activeResources={activeResources}
         />
       </div>
     </div>

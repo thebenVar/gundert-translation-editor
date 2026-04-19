@@ -3,6 +3,7 @@ import {
   buildEntryListQueryOptions,
   fetchEntryListWithStatus,
   parseStatusFromQuery,
+  parseResourcesFromQuery,
 } from '@/lib/browser/entry-list';
 
 export async function GET(request: Request) {
@@ -13,13 +14,15 @@ export async function GET(request: Request) {
     status: parseStatusFromQuery(searchParams.get('status')),
     pageSize: 50,
   });
+  const resourceSlugs = parseResourcesFromQuery(searchParams.get('resource'));
 
   try {
     const result = await fetchEntryListWithStatus(
       options.pageParam,
       options.targetLanguage,
       options.status,
-      options.pageSize
+      options.pageSize,
+      resourceSlugs
     );
 
     return NextResponse.json(result, {

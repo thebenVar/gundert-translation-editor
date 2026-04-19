@@ -115,6 +115,14 @@ export function parseSearchFromQuery(query: string | null): string | null {
   return normalizeSearchQuery(query);
 }
 
+export function parseResourcesFromQuery(resourceParam: string | null): string[] {
+  if (!resourceParam || resourceParam.trim().length === 0) return [];
+  return resourceParam
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 export function detectReferenceFormat(query: string): ReferenceFormat {
   const trimmed = query.trim();
 
@@ -383,7 +391,8 @@ export async function fetchEntryListWithStatus(
   pageParam: string | null,
   targetLanguage = 'ml',
   status: TranslationStatus[] = [...ALL_TRANSLATION_STATUSES],
-  pageSize = 50
+  pageSize = 50,
+  resourceSlugs: string[] = []
 ): Promise<EntryListPage> {
   const { page, offset, limit } = parsePagination(pageParam, pageSize);
   const normalizedStatus = normalizeStatusFilters(status);
@@ -395,6 +404,13 @@ export async function fetchEntryListWithStatus(
         sql`, `
       )})`
     : sql``;
+  const resourcePredicate =
+    resourceSlugs.length > 0
+      ? sql`AND r.slug IN (${sql.join(
+          resourceSlugs.map((s) => sql`${s}`),
+          sql`, `
+        )})`
+      : sql``;
 
   const listResult = await db.execute(sql`
     SELECT
@@ -423,6 +439,7 @@ export async function fetchEntryListWithStatus(
       AND rv.deleted_at IS NULL
       AND r.deleted_at IS NULL
       ${statusPredicate}
+      ${resourcePredicate}
     ORDER BY
       CASE r.source
         WHEN 'UBS' THEN 1
@@ -455,6 +472,7 @@ export async function fetchEntryListWithStatus(
       AND rv.deleted_at IS NULL
       AND r.deleted_at IS NULL
       ${statusPredicate}
+        ${resourcePredicate}
   `);
 
   const entries = (listResult.rows ?? []).map((row) => normalizeEntryListRow(row));

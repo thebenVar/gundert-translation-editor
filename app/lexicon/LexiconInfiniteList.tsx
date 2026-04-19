@@ -13,6 +13,7 @@ type Props = {
   total: number;
   activeStatuses: TranslationStatus[];
   query: string | null;
+  activeResources: string[];
 };
 
 const STATUS_LABELS: Record<TranslationStatus, string> = {
@@ -38,6 +39,7 @@ export default function LexiconInfiniteList({
   total,
   activeStatuses,
   query,
+  activeResources,
 }: Props) {
   const [entries, setEntries] = useState<EntryListItem[]>(initialEntries);
   const [page, setPage] = useState(initialPage);
@@ -47,6 +49,15 @@ export default function LexiconInfiniteList({
   const sentinelRef = useRef<HTMLDivElement>(null);
   // Track whether we're mid-load to avoid duplicate fetches
   const loadingRef = useRef(false);
+
+  useEffect(() => {
+    // Sync local list state when server-provided props change (filter/query navigation)
+    setEntries(initialEntries);
+    setPage(initialPage);
+    setHasMore(initialHasMore);
+    setError(null);
+    loadingRef.current = false;
+  }, [initialEntries, initialHasMore, initialPage]);
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMore) return;
@@ -63,6 +74,9 @@ export default function LexiconInfiniteList({
       if (query) {
         params.set('q', query);
       }
+      if (activeResources.length > 0) {
+        params.set('resource', activeResources.join(','));
+      }
 
       const res = await fetch(`/api/resources/entries?${params.toString()}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -77,7 +91,7 @@ export default function LexiconInfiniteList({
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [page, hasMore, activeStatuses, query]);
+  }, [page, hasMore, activeStatuses, query, activeResources]);
 
   // IntersectionObserver on the sentinel div
   useEffect(() => {
