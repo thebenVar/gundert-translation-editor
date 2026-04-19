@@ -1,6 +1,6 @@
 # Translation Workbench Progress Checklist
 
-Use this tracker to execute and monitor translation feature delivery.
+Use this tracker to execute and monitor the POC's translation feature delivery.
 
 Single point of truth:
 - This document is the authoritative status log for translation work.
