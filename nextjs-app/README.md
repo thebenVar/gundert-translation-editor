@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gundert Translation Editor — Next.js App
 
-## Getting Started
+This is the active MVP application for the Gundert Translation Editor. It contains the current Next.js 16 app, the Phase 1 UBS importer work, the database schema, and the browser or lexicon experience under test.
 
-First, run the development server:
+## Scope
+
+Current repo surface in `nextjs-app/`:
+
+- Next.js 16 App Router application
+- React 19 + TypeScript
+- Neon Postgres via Drizzle ORM
+- Auth.js v5 credentials flow
+- UBS XML parser and importer pipeline
+- Browser or lexicon route for imported entries
+- Translator page scaffold
+- Jest-based unit, contract, smoke, and DB integration tests
+
+## Key Routes
+
+- `/` — home page
+- `/lexicon` — current browser implementation for imported resources
+- `/browser` — compatibility route that redirects to `/lexicon`
+- `/translator` — translator workbench page scaffold
+- `/api/resources/entries` — paginated entry list API
+- `/api/import` — import endpoint
+- `/api/translate` — translation endpoint
+
+## Data Sources
+
+Phase 1 currently centers on the three UBS XML dictionaries stored under `data/xml/`:
+
+- `FAUNA_en.xml`
+- `FLORA_en.xml`
+- `REALIA_en.xml`
+
+The parser and importer tests use these files directly.
+
+## Commands
+
+Run all commands from `nextjs-app/`.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm test
+npm run test:db
+npm run db:push
+npm run import:ubs
+npm run validate:roundtrip
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Testing Snapshot
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Last verified on 2026-04-19:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm test` -> 13 passing suites, 2 skipped suites
+- 254 passing tests, 82 skipped tests
+- DB suites are gated behind `RUN_DB_INTEGRATION_TESTS=true` and `POSTGRES_URL_NON_POOLING`
 
-## Learn More
+Current test coverage includes:
 
-To learn more about Next.js, take a look at the following resources:
+- XML parser and importer contracts
+- Import risk and security matrices
+- Browser query, status, resource-filter, and URL helpers
+- `/lexicon` route smoke tests
+- `/api/resources/entries` query handling
+- DB schema and import integration tests
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Some smoke tests hit `http://localhost:3000` directly, so keep the dev server running when working on route-level behavior.
+- `/browser` is kept as a redirect for compatibility, but active work is happening on `/lexicon`.
+- Read the root `AGENTS.md` and `nextjs-app/AGENTS.md` before making changes in this app.

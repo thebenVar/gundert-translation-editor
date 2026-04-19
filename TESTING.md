@@ -3,13 +3,18 @@
 ## Test Status
 
 **Current State:**
-- ✅ **14 unit tests passing** - XML parser tests (no database needed)
-- ⏭️ **76 integration tests skipped** - Database tests (waiting for schema deployment)
+- Last verified on 2026-04-19 with `cd nextjs-app; npm test`
+- ✅ **13 test suites passing**
+- ⏭️ **2 DB-gated integration suites skipped**
+- ✅ **254 tests passing**
+- ⏭️ **82 tests skipped**
 
 ```
-Test Suites: 1 passed, 2 skipped
-Tests:       14 passed, 76 skipped
+Test Suites: 2 skipped, 13 passed, 13 of 15 total
+Tests:       82 skipped, 254 passed, 336 total
 ```
+
+The current suite now covers parser behavior, importer contracts, import risk and security guardrails, browser query helpers, API query handling, route smoke tests, and DB integration gates.
 
 ---
 
@@ -17,10 +22,14 @@ Tests:       14 passed, 76 skipped
 
 All active test commands below are run from `nextjs-app/`.
 
-### 1. Unit Tests: XML Parser (`nextjs-app/tests/xml-parser.test.ts`)
+### 1. Parser and Importer Contract Tests
 **Status:** ✅ Passing
 
-Tests the UBS XML import parser in isolation, without any database.
+Files:
+- `nextjs-app/tests/xml-parser.test.ts`
+- `nextjs-app/tests/importer/us-008.test.ts`
+
+These tests cover the current XML parsing baseline and the GH-008 importer contract surface without requiring a live database.
 
 **Coverage:**
 - XML parsing for FAUNA, FLORA, REALIA files
@@ -31,19 +40,112 @@ Tests the UBS XML import parser in isolation, without any database.
 - Checksum consistency
 - Bulk processing
 - Data structure validation
+- Import module shape and resource configuration
+- Idempotency, import lock, scoped key, RBAC, and JSONB payload contracts
 
 **Run locally:**
 ```bash
 cd nextjs-app
 npm test -- tests/xml-parser.test.ts
+npm test -- tests/importer/us-008.test.ts
 ```
 
 ---
 
-### 2. Integration Tests: Database Import (`nextjs-app/tests/db/import.test.ts`)
-**Status:** ⏭️ Skipped (database required)
+### 2. Import Hardening Matrices
+**Status:** ✅ Passing
+
+Files:
+- `nextjs-app/tests/import-workflow-risk-matrix.test.ts`
+- `nextjs-app/tests/import-security-matrix.test.ts`
+
+These red-phase tests pin the expected importer failure modes, safety controls, and helper APIs before deeper implementation work lands.
+
+**Coverage:**
+- Structured importer error codes for missing, empty, malformed, and schema-invalid XML
+- Duplicate key, namespace, encoding, timeout, and index-target contract checks
+- XXE, DOCTYPE, entity expansion, path traversal, payload size, and nesting guards
+- Rate-limit, RBAC, logging, and safe error-mapping contract coverage
+
+**Run locally:**
+```bash
+cd nextjs-app
+npm test -- tests/import-workflow-risk-matrix.test.ts
+npm test -- tests/import-security-matrix.test.ts
+```
+
+---
+
+### 3. Browser Query and URL Logic
+**Status:** ✅ Passing
+
+Files:
+- `nextjs-app/tests/browser/us-001.test.ts`
+- `nextjs-app/tests/browser/us-002.test.ts`
+- `nextjs-app/tests/browser/us-003.test.ts`
+- `nextjs-app/tests/browser/entry-list.test.ts`
+- `nextjs-app/tests/browser/lexicon-utils.test.ts`
+
+These tests exercise the current list, status, search, resource-filter, and URL-builder logic behind the browser or lexicon experience.
+
+**Coverage:**
+- Pagination defaults and entry-card normalization
+- Status parsing, canonicalization, and `needs_work` expansion
+- Search query normalization and reference format detection
+- Human, USFM, and mnemonic Bible reference token generation
+- Resource slug parsing and URL serialization for `/lexicon`
+
+**Run locally:**
+```bash
+cd nextjs-app
+npm test -- tests/browser/us-001.test.ts
+npm test -- tests/browser/us-002.test.ts
+npm test -- tests/browser/us-003.test.ts
+npm test -- tests/browser/entry-list.test.ts
+npm test -- tests/browser/lexicon-utils.test.ts
+```
+
+---
+
+### 4. API and Route Smoke Tests
+**Status:** ✅ Passing
+
+Files:
+- `nextjs-app/tests/api/resources-entries-status-filter.test.ts`
+- `nextjs-app/tests/api/resources-entries-search-query.test.ts`
+- `nextjs-app/tests/api/resources-entries-resource-filter.test.ts`
+- `nextjs-app/tests/browser/lexicon-page-params.test.ts`
+
+These tests validate query-option shaping and smoke-test the current HTTP surfaces.
+
+**Coverage:**
+- `/api/resources/entries` status, search, and resource filter query handling
+- JSON response shape checks for the resource filter endpoint
+- `/lexicon` route loading with different query-param combinations
+
+**Notes:**
+- The route smoke tests expect the app to be reachable at `http://localhost:3000`.
+- `/browser` currently redirects to `/lexicon`; the tests target `/lexicon` directly.
+
+**Run locally:**
+```bash
+cd nextjs-app
+npm test -- tests/api/resources-entries-status-filter.test.ts
+npm test -- tests/api/resources-entries-search-query.test.ts
+npm test -- tests/api/resources-entries-resource-filter.test.ts
+npm test -- tests/browser/lexicon-page-params.test.ts
+```
+
+---
+
+### 5. Database Integration Tests
+**Status:** ⏭️ Skipped by default (database required)
 
 Tests the import pipeline using live Neon database.
+
+Files:
+- `nextjs-app/tests/db/import.test.ts`
+- `nextjs-app/tests/db/schema.test.ts`
 
 **Prerequisites:**
 1. Neon database configured (`POSTGRES_URL_NON_POOLING` in `.env.local`)
@@ -63,25 +165,6 @@ npm run test:db
 - Foreign key validation
 - Idempotent upsert behavior
 - Bulk import without duplicates
-
----
-
-### 3. Integration Tests: Schema Validation (`nextjs-app/tests/db/schema.test.ts`)
-**Status:** ⏭️ Skipped (database required)
-
-Tests database schema structure, constraints, and data types.
-
-**Prerequisites:**
-1. Same as Import tests above
-
-**Run when database ready:**
-```bash
-cd nextjs-app
-npm run db:push
-npm run test:db
-```
-
-**Coverage (50+ assertions):**
 - All 10 tables exist with correct columns
 - Data types: VARCHAR, JSONB, ENUMs, UUIDs
 - Constraints: UNIQUE, NOT NULL, FKs
@@ -100,20 +183,32 @@ npm run test:db
 cd nextjs-app
 npm test
 ```
-- Runs unit tests ✅
-- Skips integration tests ⏭️
+- Runs parser, importer, browser, API, and smoke-test suites ✅
+- Skips DB-gated integration suites unless the DB env gate is enabled ⏭️
 
 ### Run All Tests (Including Integration)
 Requires: Database setup + `npm run db:push`
 ```bash
 cd nextjs-app
-npm test -- --testPathIgnorePatterns=none
+npm run test:db
 ```
 
 ### Run Specific Test Suite
 ```bash
 cd nextjs-app
 npm test -- tests/xml-parser.test.ts
+npm test -- tests/importer/us-008.test.ts
+npm test -- tests/import-workflow-risk-matrix.test.ts
+npm test -- tests/import-security-matrix.test.ts
+npm test -- tests/browser/us-001.test.ts
+npm test -- tests/browser/us-002.test.ts
+npm test -- tests/browser/us-003.test.ts
+npm test -- tests/browser/entry-list.test.ts
+npm test -- tests/browser/lexicon-page-params.test.ts
+npm test -- tests/browser/lexicon-utils.test.ts
+npm test -- tests/api/resources-entries-status-filter.test.ts
+npm test -- tests/api/resources-entries-search-query.test.ts
+npm test -- tests/api/resources-entries-resource-filter.test.ts
 npm test -- tests/db/import.test.ts
 npm test -- tests/db/schema.test.ts
 ```
@@ -169,10 +264,22 @@ npm run validate:roundtrip
 
 | Command | Purpose |
 |---------|---------|
-| `npm test` | Run all unit tests |
+| `npm test` | Run the default non-DB Jest suite |
 | `npm run test:watch` | Watch mode for development |
 | `npm test -- --coverage` | Coverage report |
-| `npm test -- tests/xml-parser.test.ts` | XML parser tests only |
+| `npm test -- tests/xml-parser.test.ts` | XML parser baseline |
+| `npm test -- tests/importer/us-008.test.ts` | Importer contract tests |
+| `npm test -- tests/import-workflow-risk-matrix.test.ts` | Import risk matrix |
+| `npm test -- tests/import-security-matrix.test.ts` | Import security matrix |
+| `npm test -- tests/browser/us-001.test.ts` | Browse entry list helpers |
+| `npm test -- tests/browser/us-002.test.ts` | Status filter helpers |
+| `npm test -- tests/browser/us-003.test.ts` | Search helper logic |
+| `npm test -- tests/browser/entry-list.test.ts` | Shared browser list logic |
+| `npm test -- tests/browser/lexicon-page-params.test.ts` | `/lexicon` route smoke tests |
+| `npm test -- tests/browser/lexicon-utils.test.ts` | Browser URL and toggle helpers |
+| `npm test -- tests/api/resources-entries-status-filter.test.ts` | API status filter query handling |
+| `npm test -- tests/api/resources-entries-search-query.test.ts` | API search query handling |
+| `npm test -- tests/api/resources-entries-resource-filter.test.ts` | API resource filter handling |
 | `npm run test:db` | DB integration suites (requires DB + env gate) |
 | `npm run import:ubs` | Run actual UBS XML importer |
 | `npm run validate:roundtrip` | Validate import integrity |
@@ -193,7 +300,7 @@ DB suites run only when both conditions are true:
 ### Default CI (No Database)
 ```bash
 cd nextjs-app
-npm test                    # Unit tests only
+npm test                    # Default Jest suite
 npm run build              # Build check
 npm run lint               # Linting
 ```
@@ -224,17 +331,17 @@ cd nextjs-app
 npm test -- tests/xml-parser.test.ts --verbose
 
 # Check XML files exist
-ls -la data/xml/
+Get-ChildItem data/xml
 ```
 
 ### Database Connection Issues
 ```bash
 cd nextjs-app
 # Check connection string
-echo $POSTGRES_URL_NON_POOLING
+Get-ChildItem Env:POSTGRES_URL_NON_POOLING
 
 # Verify schema deployed
-psql $POSTGRES_URL_NON_POOLING -c "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+psql $env:POSTGRES_URL_NON_POOLING -c "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
 ```
 
 ### Import Test Failures
@@ -251,11 +358,10 @@ npm run db:migrate
 
 ## Next Steps
 
-1. ✅ **Unit tests passing** - GH-008 implementation verified
-2. ⏳ **Deploy database schema** - `npm run db:push`
-3. ⏳ **Run integration tests** - Verify import works with real DB
-4. ⏳ **Test importer script** - `npm run import:ubs`
-5. ⏳ **Validate round-trip** - `npm run validate:roundtrip`
+1. Run `npm run test:db` after confirming the Neon test database is reachable.
+2. Add dedicated test files for GH-005, GH-006, GH-007, and GH-010 instead of relying on shared helper coverage.
+3. Add dedicated GH-009 round-trip validation coverage once the export script and diff artifacts are finalized.
+4. Add Playwright E2E coverage for the `/lexicon` flow and the `/browser` redirect.
 
 ---
 

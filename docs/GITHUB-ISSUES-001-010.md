@@ -4,6 +4,13 @@
 
 **Linked PRD:** [PRD-001-resource-browser.md](PRD-001-resource-browser.md)
 
+## Current Snapshot
+
+- Verified against live GitHub issues on 2026-04-19: open issues `#2` through `#13` map to GH-011, GH-008, GH-009, GH-012, GH-001, GH-003, GH-002, GH-004, GH-006, GH-005, GH-007, and GH-010.
+- Current committed test coverage exists for GH-001, GH-002, GH-003, GH-008, and GH-011, plus shared coverage for GH-004, GH-009, and GH-012.
+- Dedicated test files do not yet exist for GH-005, GH-006, GH-007, or GH-010.
+- The current browser route implementation lives at `/lexicon`; `/browser` exists as a redirect route.
+
 ---
 
 ## GH-001 — Browse entry list
@@ -115,7 +122,7 @@ Translators need to narrow search results to specific resources to avoid clutter
 
 - Depends on: GH-001 (Browse entry list), GH-003 (Search for an entry)
 - Blocks: GH-007 (Preserve browser state)
-- Tests: See `tests/browser/us-004.test.ts`
+- Tests: Current coverage lives in `tests/api/resources-entries-resource-filter.test.ts`, `tests/browser/entry-list.test.ts`, and `tests/browser/lexicon-utils.test.ts`
 
 ---
 
@@ -151,7 +158,7 @@ Users need to see full source content and existing translations for each entry t
 
 - Depends on: GH-001 (Browse entry list)
 - Blocks: GH-010 (Public reader ratings and feedback)
-- Tests: See `tests/browser/us-005.test.ts`
+- Tests: No dedicated test file committed yet
 
 ---
 
@@ -177,7 +184,7 @@ Translators need to set a target language once and have it persist to see releva
 
 - Depends on: Auth working, database schema
 - Blocks: GH-002 (Filter by translation status)
-- Tests: See `tests/browser/us-006.test.ts`
+- Tests: No dedicated test file committed yet
 
 ---
 
@@ -202,7 +209,7 @@ Users need browser navigation to preserve filters, scroll position, and selectio
 
 - Depends on: GH-001–006 (all prior browser features)
 - Blocks: None (integration task)
-- Tests: See `tests/browser/us-007.test.ts`
+- Tests: No dedicated test file committed yet
 
 ---
 
@@ -258,7 +265,7 @@ Admins need proof that imported data has not been corrupted or lost during impor
 
 - Depends on: GH-008 (Import UBS XML resources)
 - Blocks: GH-001 (Browse entry list) — release gate
-- Tests: See `tests/importer/us-009.test.ts`
+- Tests: Current coverage lives in `tests/xml-parser.test.ts` and `tests/import-workflow-risk-matrix.test.ts`; no dedicated `us-009` file is committed yet
 
 ---
 
@@ -288,7 +295,7 @@ Public Readers need to submit entry ratings and feedback without creating an acc
 
 - Depends on: GH-005 (View entry detail), GH-012 (Database schema)
 - Blocks: None (advisory feature)
-- Tests: See `tests/browser/us-010.test.ts`
+- Tests: No dedicated test file committed yet
 
 ---
 
@@ -351,7 +358,7 @@ Set up `/browser` route with public access, SSR initial render, and dark/light t
 
 - Depends on: GH-011 (Database schema), GH-008 (Import)
 - Blocks: GH-001–007 (all browser features)
-- Tests: See `tests/browser/fr-03.test.ts`
+- Tests: Current route smoke coverage lives in `tests/browser/lexicon-page-params.test.ts`; no dedicated `fr-03` file is committed yet
 
 ---
 
@@ -386,8 +393,10 @@ For each issue, tests must follow TDD:
 **Test directories:**
 - `tests/db/` — database and schema tests
 - `tests/importer/` — XML importer tests
-- `tests/browser/` — browser UI and API route tests
-- `tests/e2e/` — end-to-end Playwright tests
+- `tests/browser/` — browser UI, URL, and route smoke tests
+- `tests/api/` — resource entry API query handling
+- `tests/import-workflow-risk-matrix.test.ts` and `tests/import-security-matrix.test.ts` — importer hardening matrices
+- `tests/e2e/` — planned end-to-end Playwright coverage (not committed yet)
 
 ---
 
