@@ -1,0 +1,1686 @@
+{
+  "totalEntries": 720,
+  "totalWords": 317407,
+  "totalImages": 0,
+  "dictionaries": [
+    {
+      "category": "Fauna",
+      "color": "#3498db",
+      "sourceDictionary": "FAUNA",
+      "sourceLang": "en",
+      "totalWords": 84514,
+      "totalEntries": 103,
+      "chapters": [
+        {
+          "key": "1",
+          "title": "Animals, general",
+          "words": 1065,
+          "subs": [
+            {
+              "key": "1.1",
+              "title": "Domestic animals, cattle, livestock, animal, living being",
+              "words": 229
+            },
+            {
+              "key": "1.2",
+              "title": "Animals that are ridden or made to carry loads",
+              "words": 282
+            },
+            {
+              "key": "1.3",
+              "title": "Wild or dangerous animals",
+              "words": 554
+            }
+          ]
+        },
+        {
+          "key": "2",
+          "title": "Mammals",
+          "words": 37208,
+          "subs": [
+            {
+              "key": "2.1",
+              "title": "Clean animals (Deut 14:4-6)",
+              "words": 506
+            },
+            {
+              "key": "2.2",
+              "title": "Antelope",
+              "words": 610
+            },
+            {
+              "key": "2.3",
+              "title": "Apes",
+              "words": 6
+            },
+            {
+              "key": "2.4",
+              "title": "Ass, donkey",
+              "words": 1084
+            },
+            {
+              "key": "2.5",
+              "title": "Bat",
+              "words": 360
+            },
+            {
+              "key": "2.6",
+              "title": "Bear",
+              "words": 635
+            },
+            {
+              "key": "2.7",
+              "title": "Bubal hartebeest (roe deer)",
+              "words": 920
+            },
+            {
+              "key": "2.8",
+              "title": "Camel, dromedary",
+              "words": 1297
+            },
+            {
+              "key": "2.9",
+              "title": "Cat",
+              "words": 540
+            },
+            {
+              "key": "2.10",
+              "title": "Cattle, cow, ox, bull",
+              "words": 2790
+            },
+            {
+              "key": "2.11",
+              "title": "Deer",
+              "words": 1254
+            },
+            {
+              "key": "2.12",
+              "title": "Dog",
+              "words": 874
+            },
+            {
+              "key": "2.13",
+              "title": "Dugong",
+              "words": 549
+            },
+            {
+              "key": "2.14",
+              "title": "Elephant",
+              "words": 800
+            },
+            {
+              "key": "2.15",
+              "title": "Gazelle",
+              "words": 519
+            },
+            {
+              "key": "2.16",
+              "title": "Goat",
+              "words": 1274
+            },
+            {
+              "key": "2.17",
+              "title": "Hare",
+              "words": 448
+            },
+            {
+              "key": "2.18",
+              "title": "Horse",
+              "words": 1725
+            },
+            {
+              "key": "2.19",
+              "title": "Hyena",
+              "words": 1286
+            },
+            {
+              "key": "2.20",
+              "title": "Hyrax, rock badger",
+              "words": 1072
+            },
+            {
+              "key": "2.21",
+              "title": "Ibex, wild goat, mountain goat",
+              "words": 944
+            },
+            {
+              "key": "2.22",
+              "title": "Jackal, fox",
+              "words": 2013
+            },
+            {
+              "key": "2.23",
+              "title": "Leopard, cheetah",
+              "words": 779
+            },
+            {
+              "key": "2.24",
+              "title": "Lion",
+              "words": 4207
+            },
+            {
+              "key": "2.25",
+              "title": "Mole rat",
+              "words": 545
+            },
+            {
+              "key": "2.26",
+              "title": "Mongoose, weasel",
+              "words": 506
+            },
+            {
+              "key": "2.27",
+              "title": "Mouse, rat",
+              "words": 996
+            },
+            {
+              "key": "2.28",
+              "title": "Mule",
+              "words": 361
+            },
+            {
+              "key": "2.29",
+              "title": "Oryx",
+              "words": 548
+            },
+            {
+              "key": "2.30",
+              "title": "Pig",
+              "words": 424
+            },
+            {
+              "key": "2.31",
+              "title": "Sheep, lamb",
+              "words": 2017
+            },
+            {
+              "key": "2.32",
+              "title": "Wild ass",
+              "words": 495
+            },
+            {
+              "key": "2.33",
+              "title": "Wild boar",
+              "words": 535
+            },
+            {
+              "key": "2.34",
+              "title": "Wild ox",
+              "words": 1483
+            },
+            {
+              "key": "2.35",
+              "title": "Wolf",
+              "words": 981
+            }
+          ]
+        },
+        {
+          "key": "3",
+          "title": "Birds",
+          "words": 22345,
+          "subs": [
+            {
+              "key": "3.1",
+              "title": "Bird, generic",
+              "words": 444
+            },
+            {
+              "key": "3.2",
+              "title": "Birds, clean and unclean",
+              "words": 2171
+            },
+            {
+              "key": "3.3",
+              "title": "Chicken, rooster, hen",
+              "words": 564
+            },
+            {
+              "key": "3.4",
+              "title": "Cormorant",
+              "words": 702
+            },
+            {
+              "key": "3.5",
+              "title": "Crane",
+              "words": 1036
+            },
+            {
+              "key": "3.6",
+              "title": "Crow, raven",
+              "words": 779
+            },
+            {
+              "key": "3.7",
+              "title": "Dove, pigeon",
+              "words": 1085
+            },
+            {
+              "key": "3.8",
+              "title": "Eagle, vulture",
+              "words": 3829
+            },
+            {
+              "key": "3.9",
+              "title": "Goose",
+              "words": 645
+            },
+            {
+              "key": "3.10",
+              "title": "Hawk, falcon",
+              "words": 438
+            },
+            {
+              "key": "3.11",
+              "title": "Heron",
+              "words": 207
+            },
+            {
+              "key": "3.12",
+              "title": "Hoopoe",
+              "words": 306
+            },
+            {
+              "key": "3.13",
+              "title": "Jackdaw",
+              "words": 688
+            },
+            {
+              "key": "3.14",
+              "title": "Kite",
+              "words": 415
+            },
+            {
+              "key": "3.15",
+              "title": "Osprey",
+              "words": 629
+            },
+            {
+              "key": "3.16",
+              "title": "Ostrich",
+              "words": 731
+            },
+            {
+              "key": "3.17",
+              "title": "Owl",
+              "words": 322
+            },
+            {
+              "key": "3.18",
+              "title": "Partridge",
+              "words": 2218
+            },
+            {
+              "key": "3.19",
+              "title": "Quail",
+              "words": 367
+            },
+            {
+              "key": "3.20",
+              "title": "Seagull",
+              "words": 367
+            },
+            {
+              "key": "3.21",
+              "title": "Sparrow",
+              "words": 273
+            },
+            {
+              "key": "3.22",
+              "title": "Stork",
+              "words": 491
+            },
+            {
+              "key": "3.23",
+              "title": "Swallow, swift",
+              "words": 805
+            }
+          ]
+        },
+        {
+          "key": "4",
+          "title": "Snakes and lizards",
+          "words": 6852,
+          "subs": [
+            {
+              "key": "4.1",
+              "title": "Introduction to snakes and lizards",
+              "words": 892
+            },
+            {
+              "key": "4.2",
+              "title": "Reptiles (crawling and creeping things)",
+              "words": 222
+            },
+            {
+              "key": "4.3",
+              "title": "Chameleon",
+              "words": 523
+            },
+            {
+              "key": "4.4",
+              "title": "Cobra",
+              "words": 802
+            },
+            {
+              "key": "4.5",
+              "title": "Gecko",
+              "words": 414
+            },
+            {
+              "key": "4.6",
+              "title": "Lizard",
+              "words": 540
+            },
+            {
+              "key": "4.7",
+              "title": "Monitor",
+              "words": 354
+            },
+            {
+              "key": "4.8",
+              "title": "Skink",
+              "words": 254
+            },
+            {
+              "key": "4.9",
+              "title": "Snake",
+              "words": 1175
+            },
+            {
+              "key": "4.10",
+              "title": "Viper",
+              "words": 1676
+            }
+          ]
+        },
+        {
+          "key": "5",
+          "title": "Fish, frogs, and mollusks",
+          "words": 1515,
+          "subs": [
+            {
+              "key": "5.1",
+              "title": "Fish",
+              "words": 767
+            },
+            {
+              "key": "5.2",
+              "title": "Frog",
+              "words": 240
+            },
+            {
+              "key": "5.3",
+              "title": "Onycha",
+              "words": 263
+            },
+            {
+              "key": "5.4",
+              "title": "Snail",
+              "words": 245
+            }
+          ]
+        },
+        {
+          "key": "6",
+          "title": "Insects, spiders, and worms",
+          "words": 8454,
+          "subs": [
+            {
+              "key": "6.1",
+              "title": "Ant",
+              "words": 190
+            },
+            {
+              "key": "6.2",
+              "title": "Bee",
+              "words": 409
+            },
+            {
+              "key": "6.3",
+              "title": "Flea",
+              "words": 390
+            },
+            {
+              "key": "6.4",
+              "title": "Fly",
+              "words": 503
+            },
+            {
+              "key": "6.5",
+              "title": "Gadfly",
+              "words": 155
+            },
+            {
+              "key": "6.6",
+              "title": "Gnat, mosquito, louse",
+              "words": 1262
+            },
+            {
+              "key": "6.7",
+              "title": "Hornet, wasp",
+              "words": 598
+            },
+            {
+              "key": "6.8",
+              "title": "Leech",
+              "words": 350
+            },
+            {
+              "key": "6.9",
+              "title": "Locust, grasshopper, cricket",
+              "words": 2952
+            },
+            {
+              "key": "6.10",
+              "title": "Moth",
+              "words": 344
+            },
+            {
+              "key": "6.11",
+              "title": "Scorpion",
+              "words": 273
+            },
+            {
+              "key": "6.12",
+              "title": "Spider",
+              "words": 281
+            },
+            {
+              "key": "6.13",
+              "title": "Worm, maggot",
+              "words": 747
+            }
+          ]
+        },
+        {
+          "key": "7",
+          "title": "Mythical monsters",
+          "words": 2045,
+          "subs": [
+            {
+              "key": "7.1",
+              "title": "Behemoth",
+              "words": 649
+            },
+            {
+              "key": "7.2",
+              "title": "Dragon, sea monster",
+              "words": 664
+            },
+            {
+              "key": "7.3",
+              "title": "Leviathan",
+              "words": 732
+            }
+          ]
+        },
+        {
+          "key": "8",
+          "title": "Glossary",
+          "words": 0,
+          "subs": []
+        },
+        {
+          "key": "9",
+          "title": "Selected Bibliography",
+          "words": 0,
+          "subs": []
+        }
+      ]
+    },
+    {
+      "category": "Flora",
+      "color": "#2ecc71",
+      "sourceDictionary": "FLORA",
+      "sourceLang": "en",
+      "totalWords": 77916,
+      "totalEntries": 129,
+      "chapters": [
+        {
+          "key": "1",
+          "title": "Wild Trees and Shrubs",
+          "words": 16637,
+          "subs": [
+            {
+              "key": "1.0",
+              "title": "Introduction",
+              "words": 620
+            },
+            {
+              "key": "1.1",
+              "title": "Acacia",
+              "words": 473
+            },
+            {
+              "key": "1.2",
+              "title": "Boxthorn",
+              "words": 449
+            },
+            {
+              "key": "1.3",
+              "title": "Broom",
+              "words": 711
+            },
+            {
+              "key": "1.4",
+              "title": "Burning bush",
+              "words": 607
+            },
+            {
+              "key": "1.5",
+              "title": "Cedar",
+              "words": 865
+            },
+            {
+              "key": "1.6",
+              "title": "Cypress",
+              "words": 1555
+            },
+            {
+              "key": "1.7",
+              "title": "Ebony",
+              "words": 568
+            },
+            {
+              "key": "1.8",
+              "title": "Elm",
+              "words": 370
+            },
+            {
+              "key": "1.9",
+              "title": "Fir",
+              "words": 407
+            },
+            {
+              "key": "1.10",
+              "title": "Ivy",
+              "words": 207
+            },
+            {
+              "key": "1.11",
+              "title": "Juniper",
+              "words": 45
+            },
+            {
+              "key": "1.12",
+              "title": "Laurel (bay tree)",
+              "words": 637
+            },
+            {
+              "key": "1.13",
+              "title": "Laurustinus (laurestinus)",
+              "words": 330
+            },
+            {
+              "key": "1.14",
+              "title": "Lotus plant",
+              "words": 268
+            },
+            {
+              "key": "1.15",
+              "title": "Myrtle",
+              "words": 511
+            },
+            {
+              "key": "1.16",
+              "title": "Oak",
+              "words": 444
+            },
+            {
+              "key": "1.17",
+              "title": "Oleander",
+              "words": 297
+            },
+            {
+              "key": "1.18",
+              "title": "Pine",
+              "words": 41
+            },
+            {
+              "key": "1.19",
+              "title": "Plane",
+              "words": 427
+            },
+            {
+              "key": "1.20",
+              "title": "Poplar",
+              "words": 602
+            },
+            {
+              "key": "1.21",
+              "title": "Sandalwood (red saunders)",
+              "words": 1463
+            },
+            {
+              "key": "1.22",
+              "title": "Styrax",
+              "words": 407
+            },
+            {
+              "key": "1.23",
+              "title": "Tamarisk",
+              "words": 646
+            },
+            {
+              "key": "1.24",
+              "title": "Terebinth",
+              "words": 771
+            },
+            {
+              "key": "1.25",
+              "title": "Thyine (sandarac)",
+              "words": 259
+            },
+            {
+              "key": "1.26",
+              "title": "Willow",
+              "words": 661
+            }
+          ]
+        },
+        {
+          "key": "2",
+          "title": "Domestic trees and shrubs",
+          "words": 12357,
+          "subs": [
+            {
+              "key": "2.0",
+              "title": "Introduction",
+              "words": 530
+            },
+            {
+              "key": "2.1",
+              "title": "Almond",
+              "words": 805
+            },
+            {
+              "key": "2.2",
+              "title": "Apple",
+              "words": 585
+            },
+            {
+              "key": "2.3",
+              "title": "Carob",
+              "words": 553
+            },
+            {
+              "key": "2.4",
+              "title": "Citron",
+              "words": 577
+            },
+            {
+              "key": "2.5",
+              "title": "Date palm",
+              "words": 1226
+            },
+            {
+              "key": "2.6",
+              "title": "Fig",
+              "words": 779
+            },
+            {
+              "key": "2.7",
+              "title": "Mulberry",
+              "words": 613
+            },
+            {
+              "key": "2.8",
+              "title": "Olive",
+              "words": 1021
+            },
+            {
+              "key": "2.9",
+              "title": "Pistachio",
+              "words": 352
+            },
+            {
+              "key": "2.10",
+              "title": "Pomegranate",
+              "words": 1155
+            },
+            {
+              "key": "2.11",
+              "title": "Sycomore fig",
+              "words": 611
+            },
+            {
+              "key": "2.12",
+              "title": "Vine",
+              "words": 2735
+            },
+            {
+              "key": "2.13",
+              "title": "Walnut",
+              "words": 815
+            }
+          ]
+        },
+        {
+          "key": "3",
+          "title": "Food Plants, Grown and Gathered",
+          "words": 13206,
+          "subs": [
+            {
+              "key": "3.0",
+              "title": "Introduction",
+              "words": 296
+            },
+            {
+              "key": "3.1",
+              "title": "Grain",
+              "words": 1519
+            },
+            {
+              "key": "3.2",
+              "title": "Leafy vegetables",
+              "words": 583
+            },
+            {
+              "key": "3.3",
+              "title": "Pulses",
+              "words": 15
+            },
+            {
+              "key": "3.4",
+              "title": "Melon",
+              "words": 14
+            },
+            {
+              "key": "3.5",
+              "title": "Condiments",
+              "words": 24
+            }
+          ]
+        },
+        {
+          "key": "4",
+          "title": "Incense and Ointment",
+          "words": 8689,
+          "subs": [
+            {
+              "key": "4.0",
+              "title": "Introduction",
+              "words": 905
+            },
+            {
+              "key": "4.1",
+              "title": "Trees and plants yielding incense and perfume",
+              "words": 8
+            },
+            {
+              "key": "4.2",
+              "title": "Ointment and balm (medicinal plants)",
+              "words": 139
+            }
+          ]
+        },
+        {
+          "key": "5",
+          "title": "Plants for Everyday Use",
+          "words": 11732,
+          "subs": [
+            {
+              "key": "5.0",
+              "title": "Introduction",
+              "words": 24
+            },
+            {
+              "key": "5.1",
+              "title": "Plants for weaving and building",
+              "words": 343
+            },
+            {
+              "key": "5.2",
+              "title": "Other useful plants",
+              "words": 58
+            }
+          ]
+        },
+        {
+          "key": "6",
+          "title": "Flowers, Thorns, and Weeds",
+          "words": 8053,
+          "subs": [
+            {
+              "key": "6.0",
+              "title": "Introduction",
+              "words": 453
+            },
+            {
+              "key": "6.1",
+              "title": "Flowers",
+              "words": 780
+            },
+            {
+              "key": "6.2",
+              "title": "Thorns, thistles, brambles, and briers",
+              "words": 470
+            },
+            {
+              "key": "6.3",
+              "title": "Weeds",
+              "words": 40
+            }
+          ]
+        },
+        {
+          "key": "7",
+          "title": "Selected Bibliography",
+          "words": 2215,
+          "subs": [
+            {
+              "key": "7.1",
+              "title": "Texts",
+              "words": 116
+            },
+            {
+              "key": "7.2",
+              "title": "Modern Versions",
+              "words": 633
+            },
+            {
+              "key": "7.3",
+              "title": "Scientific Works",
+              "words": 577
+            },
+            {
+              "key": "7.4",
+              "title": "Dictionaries, Textual Studies, and Other Reference Works",
+              "words": 885
+            },
+            {
+              "key": "7.5",
+              "title": "Websites",
+              "words": 4
+            }
+          ]
+        },
+        {
+          "key": "8",
+          "title": "Glossary",
+          "words": 0,
+          "subs": []
+        }
+      ]
+    },
+    {
+      "category": "Realia",
+      "color": "#9b59b6",
+      "sourceDictionary": "REALIA",
+      "sourceLang": "en",
+      "totalWords": 154977,
+      "totalEntries": 488,
+      "chapters": [
+        {
+          "key": "1",
+          "title": "Occupations",
+          "words": 27939,
+          "subs": [
+            {
+              "key": "1.1",
+              "title": "Agriculture and farming",
+              "words": 4
+            },
+            {
+              "key": "1.2",
+              "title": "Animal husbandry",
+              "words": 3
+            },
+            {
+              "key": "1.3",
+              "title": "Fishing",
+              "words": 8
+            },
+            {
+              "key": "1.4",
+              "title": "Hunting",
+              "words": 2
+            },
+            {
+              "key": "1.5",
+              "title": "Artisans",
+              "words": 2
+            },
+            {
+              "key": "1.6",
+              "title": "Commerce",
+              "words": 2
+            },
+            {
+              "key": "1.7",
+              "title": "Scribes",
+              "words": 2
+            },
+            {
+              "key": "1.8",
+              "title": "Builders",
+              "words": 2
+            },
+            {
+              "key": "1.9",
+              "title": "Barber",
+              "words": 2
+            },
+            {
+              "key": "1.10",
+              "title": "Royalty",
+              "words": 2
+            },
+            {
+              "key": "1.11",
+              "title": "Blacksmith",
+              "words": 2
+            },
+            {
+              "key": "1.12",
+              "title": "Carpenter",
+              "words": 7
+            },
+            {
+              "key": "1.13",
+              "title": "Leather",
+              "words": 302
+            },
+            {
+              "key": "1.14",
+              "title": "Rope, cord",
+              "words": 554
+            },
+            {
+              "key": "1.15",
+              "title": "Doctors and medicine",
+              "words": 4
+            },
+            {
+              "key": "1.16",
+              "title": "Fuller, laundryman",
+              "words": 3
+            }
+          ]
+        },
+        {
+          "key": "2",
+          "title": "Warfare",
+          "words": 10766,
+          "subs": [
+            {
+              "key": "2.1",
+              "title": "Weapon",
+              "words": 123
+            },
+            {
+              "key": "2.2",
+              "title": "Sling",
+              "words": 305
+            },
+            {
+              "key": "2.3",
+              "title": "Sword",
+              "words": 1551
+            },
+            {
+              "key": "2.4",
+              "title": "Dagger",
+              "words": 63
+            },
+            {
+              "key": "2.5",
+              "title": "Spear, lance",
+              "words": 329
+            },
+            {
+              "key": "2.6",
+              "title": "Javelin",
+              "words": 284
+            },
+            {
+              "key": "2.7",
+              "title": "Club, war club, mace, shattering weapon",
+              "words": 395
+            },
+            {
+              "key": "2.8",
+              "title": "Battle-axe",
+              "words": 185
+            },
+            {
+              "key": "2.9",
+              "title": "Helmet",
+              "words": 183
+            },
+            {
+              "key": "2.10",
+              "title": "Shields",
+              "words": 27
+            },
+            {
+              "key": "2.11",
+              "title": "Leg armor, leg protectors",
+              "words": 159
+            },
+            {
+              "key": "2.12",
+              "title": "Breastplate, chest protector",
+              "words": 239
+            },
+            {
+              "key": "2.13",
+              "title": "Scale armor, coat of mail",
+              "words": 277
+            },
+            {
+              "key": "2.14",
+              "title": "Archery",
+              "words": 2
+            },
+            {
+              "key": "2.15",
+              "title": "Chariot",
+              "words": 646
+            },
+            {
+              "key": "2.16",
+              "title": "Wooden tower on elephant",
+              "words": 208
+            },
+            {
+              "key": "2.17",
+              "title": "Standard, ensign, banner",
+              "words": 442
+            },
+            {
+              "key": "2.18",
+              "title": "Barrier, barricade, roadblock",
+              "words": 87
+            },
+            {
+              "key": "2.19",
+              "title": "Siege instruments",
+              "words": 421
+            }
+          ]
+        },
+        {
+          "key": "3",
+          "title": "Buildings and Structures",
+          "words": 39027,
+          "subs": [
+            {
+              "key": "3.1",
+              "title": "House, permanent dwelling",
+              "words": 523
+            },
+            {
+              "key": "3.2",
+              "title": "Tent",
+              "words": 800
+            },
+            {
+              "key": "3.3",
+              "title": "Inn",
+              "words": 154
+            },
+            {
+              "key": "3.4",
+              "title": "Palace",
+              "words": 465
+            },
+            {
+              "key": "3.5",
+              "title": "Column, pillar, capital",
+              "words": 1308
+            },
+            {
+              "key": "3.6",
+              "title": "Boundary wall, fence",
+              "words": 687
+            },
+            {
+              "key": "3.7",
+              "title": "Boundary marker",
+              "words": 207
+            },
+            {
+              "key": "3.8",
+              "title": "Well",
+              "words": 417
+            },
+            {
+              "key": "3.9",
+              "title": "Cistern",
+              "words": 695
+            },
+            {
+              "key": "3.10",
+              "title": "Pool",
+              "words": 282
+            },
+            {
+              "key": "3.11",
+              "title": "Water shaft, water tunnel, water channel, water supply",
+              "words": 262
+            },
+            {
+              "key": "3.12",
+              "title": "Storehouse",
+              "words": 145
+            },
+            {
+              "key": "3.13",
+              "title": "Municipal structures",
+              "words": 3
+            },
+            {
+              "key": "3.14",
+              "title": "Temples",
+              "words": 2
+            },
+            {
+              "key": "3.15",
+              "title": "Tent of Meeting and Tabernacle",
+              "words": 535
+            },
+            {
+              "key": "3.16",
+              "title": "Booth, tabernacle",
+              "words": 560
+            },
+            {
+              "key": "3.17",
+              "title": "Synagogue",
+              "words": 372
+            },
+            {
+              "key": "3.18",
+              "title": "Hall, auditorium",
+              "words": 59
+            },
+            {
+              "key": "3.19",
+              "title": "Judgment seat, tribunal",
+              "words": 244
+            },
+            {
+              "key": "3.20",
+              "title": "Courtyard, court",
+              "words": 457
+            },
+            {
+              "key": "3.21",
+              "title": "Prison and penal activity",
+              "words": 5
+            }
+          ]
+        },
+        {
+          "key": "4",
+          "title": "Religion",
+          "words": 22878,
+          "subs": [
+            {
+              "key": "4.1",
+              "title": "Covenant Box, Ark of the Covenant",
+              "words": 865
+            },
+            {
+              "key": "4.2",
+              "title": "Altars",
+              "words": 217
+            },
+            {
+              "key": "4.3",
+              "title": "Furniture of the Tabernacle and Temple",
+              "words": 231
+            },
+            {
+              "key": "4.4",
+              "title": "Tabernacle and Temple implements",
+              "words": 371
+            },
+            {
+              "key": "4.5",
+              "title": "High Priest’s clothing",
+              "words": 292
+            },
+            {
+              "key": "4.6",
+              "title": "Idols",
+              "words": 1484
+            },
+            {
+              "key": "4.7",
+              "title": "Cult place, high place",
+              "words": 587
+            },
+            {
+              "key": "4.8",
+              "title": "Burial and mourning",
+              "words": 4
+            },
+            {
+              "key": "4.9",
+              "title": "Lots",
+              "words": 374
+            }
+          ]
+        },
+        {
+          "key": "5",
+          "title": "Household",
+          "words": 12387,
+          "subs": [
+            {
+              "key": "5.1",
+              "title": "Oil lamp and wick",
+              "words": 855
+            },
+            {
+              "key": "5.2",
+              "title": "Lampstand",
+              "words": 229
+            },
+            {
+              "key": "5.3",
+              "title": "Lantern",
+              "words": 255
+            },
+            {
+              "key": "5.4",
+              "title": "Torch",
+              "words": 309
+            },
+            {
+              "key": "5.5",
+              "title": "Bed, sleeping mat",
+              "words": 985
+            },
+            {
+              "key": "5.6",
+              "title": "Cushion, pillow",
+              "words": 96
+            },
+            {
+              "key": "5.7",
+              "title": "Table for eating",
+              "words": 563
+            },
+            {
+              "key": "5.8",
+              "title": "Footstool",
+              "words": 368
+            },
+            {
+              "key": "5.9",
+              "title": "Chair, seat",
+              "words": 496
+            },
+            {
+              "key": "5.10",
+              "title": "Millstones, mill",
+              "words": 617
+            },
+            {
+              "key": "5.11",
+              "title": "Oven",
+              "words": 297
+            },
+            {
+              "key": "5.12",
+              "title": "Cooking pot, kettle",
+              "words": 564
+            },
+            {
+              "key": "5.13",
+              "title": "Griddle",
+              "words": 127
+            },
+            {
+              "key": "5.14",
+              "title": "Mirror",
+              "words": 248
+            },
+            {
+              "key": "5.15",
+              "title": "Wineskin, water bag",
+              "words": 431
+            },
+            {
+              "key": "5.16",
+              "title": "Basin, washbasin",
+              "words": 231
+            },
+            {
+              "key": "5.17",
+              "title": "Carpet, rug",
+              "words": 443
+            },
+            {
+              "key": "5.18",
+              "title": "Containers, vessels",
+              "words": 703
+            },
+            {
+              "key": "5.19",
+              "title": "Closet, cabinet, cupboard",
+              "words": 188
+            },
+            {
+              "key": "5.20",
+              "title": "Eating utensils",
+              "words": 46
+            },
+            {
+              "key": "5.21",
+              "title": "Other household items",
+              "words": 4
+            }
+          ]
+        },
+        {
+          "key": "6",
+          "title": "Clothing",
+          "words": 6864,
+          "subs": [
+            {
+              "key": "6.1",
+              "title": "Clothing (generic)",
+              "words": 590
+            },
+            {
+              "key": "6.2",
+              "title": "Outer garment, cloak, mantle, robe",
+              "words": 815
+            },
+            {
+              "key": "6.3",
+              "title": "Shirt, tunic",
+              "words": 732
+            },
+            {
+              "key": "6.4",
+              "title": "Loincloth",
+              "words": 406
+            },
+            {
+              "key": "6.5",
+              "title": "Animal skin",
+              "words": 334
+            },
+            {
+              "key": "6.6",
+              "title": "Waistband, sash, belt",
+              "words": 526
+            },
+            {
+              "key": "6.7",
+              "title": "Headdress, turban, hat",
+              "words": 389
+            },
+            {
+              "key": "6.8",
+              "title": "Wreath, crown",
+              "words": 385
+            },
+            {
+              "key": "6.9",
+              "title": "Garland",
+              "words": 120
+            },
+            {
+              "key": "6.10",
+              "title": "Apron",
+              "words": 75
+            },
+            {
+              "key": "6.11",
+              "title": "Phylactery",
+              "words": 259
+            },
+            {
+              "key": "6.12",
+              "title": "Veil",
+              "words": 286
+            },
+            {
+              "key": "6.13",
+              "title": "Sandal, shoe",
+              "words": 234
+            },
+            {
+              "key": "6.14",
+              "title": "Wristband, magic charm",
+              "words": 144
+            },
+            {
+              "key": "6.15",
+              "title": "Widow’s clothing",
+              "words": 220
+            },
+            {
+              "key": "6.16",
+              "title": "Cloth for wrapping a baby",
+              "words": 265
+            }
+          ]
+        },
+        {
+          "key": "7",
+          "title": "Music",
+          "words": 3764,
+          "subs": [
+            {
+              "key": "7.1",
+              "title": "Musical instruments (generic)",
+              "words": 407
+            },
+            {
+              "key": "7.2",
+              "title": "Stringed instruments",
+              "words": 174
+            },
+            {
+              "key": "7.3",
+              "title": "Wind instruments",
+              "words": 80
+            },
+            {
+              "key": "7.4",
+              "title": "Percussion instruments",
+              "words": 71
+            }
+          ]
+        },
+        {
+          "key": "8",
+          "title": "Transportation",
+          "words": 4139,
+          "subs": [
+            {
+              "key": "8.1",
+              "title": "Boat, ship",
+              "words": 1027
+            },
+            {
+              "key": "8.2",
+              "title": "Cart, wagon",
+              "words": 312
+            },
+            {
+              "key": "8.3",
+              "title": "Wheel",
+              "words": 332
+            },
+            {
+              "key": "8.4",
+              "title": "Saddle, saddle cloth",
+              "words": 567
+            }
+          ]
+        },
+        {
+          "key": "9",
+          "title": "Food and Drink",
+          "words": 4939,
+          "subs": [
+            {
+              "key": "9.1",
+              "title": "Wine",
+              "words": 1103
+            },
+            {
+              "key": "9.2",
+              "title": "Strong drink, beer",
+              "words": 285
+            },
+            {
+              "key": "9.3",
+              "title": "Olive oil",
+              "words": 520
+            },
+            {
+              "key": "9.4",
+              "title": "Bread",
+              "words": 1288
+            },
+            {
+              "key": "9.5",
+              "title": "Blocks of pressed dried fruit",
+              "words": 216
+            },
+            {
+              "key": "9.6",
+              "title": "Soup, stew",
+              "words": 71
+            },
+            {
+              "key": "9.7",
+              "title": "Yogurt, curds",
+              "words": 75
+            }
+          ]
+        },
+        {
+          "key": "10",
+          "title": "Personal",
+          "words": 5406,
+          "subs": [
+            {
+              "key": "10.1",
+              "title": "Bag, sack, money bag, purse",
+              "words": 641
+            },
+            {
+              "key": "10.2",
+              "title": "Seal, signet ring, ring",
+              "words": 770
+            },
+            {
+              "key": "10.3",
+              "title": "Handkerchief, cloth",
+              "words": 208
+            },
+            {
+              "key": "10.4",
+              "title": "Towel",
+              "words": 115
+            },
+            {
+              "key": "10.5",
+              "title": "Jewelry, ornaments",
+              "words": 2232
+            },
+            {
+              "key": "10.6",
+              "title": "Cosmetics",
+              "words": 16
+            }
+          ]
+        },
+        {
+          "key": "11",
+          "title": "Weights, Measures, and Money",
+          "words": 10137,
+          "subs": [
+            {
+              "key": "11.0",
+              "title": "Introduction",
+              "words": 366
+            },
+            {
+              "key": "11.1",
+              "title": "Weights",
+              "words": 150
+            },
+            {
+              "key": "11.2",
+              "title": "Units that are both weights and monetary values",
+              "words": 9
+            },
+            {
+              "key": "11.3",
+              "title": "Measures of volume",
+              "words": 219
+            },
+            {
+              "key": "11.4",
+              "title": "Measures of length",
+              "words": 157
+            },
+            {
+              "key": "11.5",
+              "title": "Measure of area",
+              "words": 4
+            },
+            {
+              "key": "11.6",
+              "title": "Money",
+              "words": 156
+            },
+            {
+              "key": "11.7",
+              "title": "Weights, Measures, and Money Bibliography",
+              "words": 319
+            }
+          ]
+        },
+        {
+          "key": "12",
+          "title": "Selected Bibliography",
+          "words": 0,
+          "subs": []
+        },
+        {
+          "key": "13",
+          "title": "Glossary",
+          "words": 0,
+          "subs": []
+        }
+      ]
+    }
+  ],
+  "requestedLang": "en",
+  "languageResolution": [
+    {
+      "dictionary": "FAUNA",
+      "requestedLang": "en",
+      "resolvedLang": "en",
+      "usedFallback": false,
+      "path": "data\\xml\\FAUNA_en.xml"
+    },
+    {
+      "dictionary": "FLORA",
+      "requestedLang": "en",
+      "resolvedLang": "en",
+      "usedFallback": false,
+      "path": "data\\xml\\FLORA_en.xml"
+    },
+    {
+      "dictionary": "REALIA",
+      "requestedLang": "en",
+      "resolvedLang": "en",
+      "usedFallback": false,
+      "path": "data\\xml\\REALIA_en.xml"
+    }
+  ]
+}

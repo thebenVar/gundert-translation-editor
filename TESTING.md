@@ -15,7 +15,9 @@ Tests:       14 passed, 76 skipped
 
 ## Test Organization
 
-### 1. Unit Tests: XML Parser (`tests/xml-parser.test.ts`)
+All active test commands below are run from `nextjs-app/`.
+
+### 1. Unit Tests: XML Parser (`nextjs-app/tests/xml-parser.test.ts`)
 **Status:** ✅ Passing
 
 Tests the UBS XML import parser in isolation, without any database.
@@ -32,12 +34,13 @@ Tests the UBS XML import parser in isolation, without any database.
 
 **Run locally:**
 ```bash
+cd nextjs-app
 npm test -- tests/xml-parser.test.ts
 ```
 
 ---
 
-### 2. Integration Tests: Database Import (`tests/db/import.test.ts`)
+### 2. Integration Tests: Database Import (`nextjs-app/tests/db/import.test.ts`)
 **Status:** ⏭️ Skipped (database required)
 
 Tests the import pipeline using live Neon database.
@@ -49,6 +52,7 @@ Tests the import pipeline using live Neon database.
 
 **Run when database ready:**
 ```bash
+cd nextjs-app
 npm run db:push
 npm run test:db
 ```
@@ -62,7 +66,7 @@ npm run test:db
 
 ---
 
-### 3. Integration Tests: Schema Validation (`tests/db/schema.test.ts`)
+### 3. Integration Tests: Schema Validation (`nextjs-app/tests/db/schema.test.ts`)
 **Status:** ⏭️ Skipped (database required)
 
 Tests database schema structure, constraints, and data types.
@@ -72,6 +76,7 @@ Tests database schema structure, constraints, and data types.
 
 **Run when database ready:**
 ```bash
+cd nextjs-app
 npm run db:push
 npm run test:db
 ```
@@ -92,6 +97,7 @@ npm run test:db
 
 ### All Tests (Current)
 ```bash
+cd nextjs-app
 npm test
 ```
 - Runs unit tests ✅
@@ -100,11 +106,13 @@ npm test
 ### Run All Tests (Including Integration)
 Requires: Database setup + `npm run db:push`
 ```bash
+cd nextjs-app
 npm test -- --testPathIgnorePatterns=none
 ```
 
 ### Run Specific Test Suite
 ```bash
+cd nextjs-app
 npm test -- tests/xml-parser.test.ts
 npm test -- tests/db/import.test.ts
 npm test -- tests/db/schema.test.ts
@@ -112,11 +120,13 @@ npm test -- tests/db/schema.test.ts
 
 ### Watch Mode
 ```bash
+cd nextjs-app
 npm run test:watch
 ```
 
 ### Single Run (CI mode)
 ```bash
+cd nextjs-app
 npm test -- --coverage
 ```
 
@@ -126,18 +136,21 @@ npm test -- --coverage
 
 ### Step 1: Ensure Database Connection
 ```bash
+cd nextjs-app
 # Check .env.local has POSTGRES_URL_NON_POOLING
 cat .env.local | grep POSTGRES_URL_NON_POOLING
 ```
 
 ### Step 2: Deploy Schema
 ```bash
+cd nextjs-app
 npm run db:push
 ```
 This creates all 10 tables in Neon.
 
 ### Step 3: Run Integration Tests
 ```bash
+cd nextjs-app
 npm test -- tests/db/import.test.ts --runInBand
 npm test -- tests/db/schema.test.ts --runInBand
 ```
@@ -145,6 +158,7 @@ npm test -- tests/db/schema.test.ts --runInBand
 ### Step 4: Verify Import Script
 After tests pass, test the actual importer:
 ```bash
+cd nextjs-app
 npm run import:ubs
 npm run validate:roundtrip
 ```
@@ -163,6 +177,8 @@ npm run validate:roundtrip
 | `npm run import:ubs` | Run actual UBS XML importer |
 | `npm run validate:roundtrip` | Validate import integrity |
 
+Legacy browser PoC tests are preserved in `legacy-poc/tests/`.
+
 ### DB Integration Gate
 DB suites run only when both conditions are true:
 1. `RUN_DB_INTEGRATION_TESTS=true`
@@ -176,6 +192,7 @@ DB suites run only when both conditions are true:
 
 ### Default CI (No Database)
 ```bash
+cd nextjs-app
 npm test                    # Unit tests only
 npm run build              # Build check
 npm run lint               # Linting
@@ -183,6 +200,7 @@ npm run lint               # Linting
 
 ### Full Integration CI (Requires Database)
 ```bash
+cd nextjs-app
 npm run db:push            # Deploy schema to test DB
 npm test -- tests/db/**    # Run all DB tests
 npm run import:ubs         # Test importer
@@ -201,6 +219,7 @@ npm run validate:roundtrip # Verify round-trip
 
 ### XML Parser Failures
 ```bash
+cd nextjs-app
 # Run with verbose output
 npm test -- tests/xml-parser.test.ts --verbose
 
@@ -210,6 +229,7 @@ ls -la data/xml/
 
 ### Database Connection Issues
 ```bash
+cd nextjs-app
 # Check connection string
 echo $POSTGRES_URL_NON_POOLING
 
@@ -219,6 +239,7 @@ psql $POSTGRES_URL_NON_POOLING -c "SELECT table_name FROM information_schema.tab
 
 ### Import Test Failures
 ```bash
+cd nextjs-app
 # Run single integration test
 npm test -- tests/db/import.test.ts -t "should insert parsed entries"
 

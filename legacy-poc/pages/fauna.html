@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fauna Dictionary - Detailed Breakdown</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #f4f7f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back { text-decoration: none; color: #3498db; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; margin-bottom: 40px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        th { background: #f8f9fa; color: #7f8c8d; text-transform: uppercase; font-size: 0.8rem; }
+        .chapter-row { background: #fdfdfd; font-weight: bold; color: #2980b9; }
+        .sub-row { color: #555; }
+        .complexity-bar { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .complexity-fill { height: 100%; background: #3498db; }
+        footer { text-align: center; margin-top: 50px; color: #95a5a6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fauna Dictionary Deep-Dive</h1>
+            <a href="../index.html" class="btn-back">← Back to Master</a>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Workload Distribution</h3>
+                <canvas id="typeChart"></canvas>
+            </div>
+            <div class="card">
+                <h3>Metrics</h3>
+                <p><strong>Total Words:</strong> 84,514</p>
+                <p><strong>Total Entries:</strong> 103</p>
+                <p><strong>Illustrations:</strong> 160</p>
+                <p><strong>Avg Complexity:</strong> 821 words per entry</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Categories & Subcategories</h2>
+            <table id="hierarchyTable">
+                <thead><tr><th>Key</th><th>Title</th><th>Words</th><th>Volume</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <footer>UBS Resources • 2026</footer>
+    </div>
+
+    <script>
+        const data = {
+  "category": "Fauna",
+  "sectionAnalysis": { "discussion": 21654, "translation": 25678, "description": 19290, "symbolism": 4904, "other": 12988 },
+  "chapters": [
+    { "key": "1", "title": "Animals, general", "words": 1744, "subcategories": [{ "key": "1.1", "title": "Domestic animals...", "words": 229 }, { "key": "1.2", "title": "Animals that carry loads", "words": 282 }, { "key": "1.3", "title": "Wild or dangerous...", "words": 554 }] },
+    { "key": "2", "title": "Mammals", "words": 37306, "subcategories": [{ "key": "2.10", "title": "Cattle, cow, ox, bull", "words": 2790 }, { "key": "2.24", "title": "Lion", "words": 4207 }, { "key": "2.31", "title": "Sheep, lamb", "words": 2017 }] },
+    { "key": "3", "title": "Birds", "words": 22404, "subcategories": [{ "key": "3.8", "title": "Eagle, vulture", "words": 3829 }, { "key": "3.18", "title": "Partridge", "words": 2218 }] },
+    { "key": "4", "title": "Snakes and lizards", "words": 6880 },
+    { "key": "5", "title": "Fish, frogs, and mollusks", "words": 1528 },
+    { "key": "6", "title": "Insects, spiders, and worms", "words": 8491 },
+    { "key": "7", "title": "Mythical monsters", "words": 2056 }
+  ]
+};
+        const tbody = document.getElementById('tableBody');
+        data.chapters.forEach(ch => {
+            const p = Math.round((ch.words/84514)*200);
+            tbody.innerHTML += `<tr class="chapter-row"><td>${ch.key}</td><td>${ch.title}</td><td>${ch.words.toLocaleString()}</td><td><div class="complexity-bar"><div class="complexity-fill" style="width: ${p}%"></div></div></td></tr>`;
+            if(ch.subcategories) ch.subcategories.forEach(sub => {
+                tbody.innerHTML += `<tr class="sub-row"><td>${sub.key}</td><td style="padding-left:30px">${sub.title}</td><td>${sub.words.toLocaleString()}</td><td></td></tr>`;
+            });
+        });
+
+        new Chart(document.getElementById('typeChart'), {
+            type: 'doughnut',
+            data: { labels: Object.keys(data.sectionAnalysis), datasets: [{ data: Object.values(data.sectionAnalysis), backgroundColor: ['#3498db', '#e67e22', '#9b59b6', '#2ecc71', '#f1c40f'] }] }
+        });
+    </script>
+</body>
+</html>

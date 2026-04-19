@@ -23,36 +23,32 @@ Median time to validated export (from resource import to approved, round-trippab
 
 ## Repository Structure
 
-- pages/
-  - Main application pages and dictionary views
-- assets/
-  - Shared frontend assets
-  - css/
-  - js/
-- data/
-  - Runtime data and source corpora
-  - entries.js, entries.json, stats.json
-  - images/, xml/, sfm/
+- index.html
+  - Root app selector page for end users
+  - Routes to MVP path and legacy PoC path
+- nextjs-app/
+  - Active Next.js application (source, API routes, tests, DB schema)
+  - app/, lib/, tests/, data/, drizzle/, public/
+- legacy-poc/
+  - Preserved pre-Next.js proof-of-concept application
+  - pages/, assets/, tests/, v01/, index.html
 - scripts/
   - Data processing and generation scripts
-- tests/
-  - Browser test runner and test scripts
-  - css/, js/
 - docs/
   - Project documentation and trackers
-- v01/
-  - Legacy snapshot content
 
 ## Legacy Entry Points (PoC)
 
-The original static HTML pages have been migrated to a Next.js 16 app with React components:
+The original static HTML PoC is preserved under `legacy-poc/`.
+
+The active product surface is in Next.js 16 with React components:
 - `/` - Home page (authentication gateway)
 - `/browser` - Resource browser (mobile-first, modern UI)
 - `/translator` - Translation workbench (AI-assisted drafting and validation)
 
 **Legacy files (preserved for reference):**
-- `pages/browser.html`, `pages/translator.html` - Original PoC UI
-- `assets/js/browser.js`, `assets/js/translator.js` - Legacy JavaScript logic
+- `legacy-poc/pages/browser.html`, `legacy-poc/pages/translator.html` - Original PoC UI
+- `legacy-poc/assets/js/browser.js`, `legacy-poc/assets/js/translator.js` - Legacy JavaScript logic
 
 ## Data Format Support
 
@@ -70,11 +66,14 @@ Run data processing scripts from the repository root:
 - `node scripts/analyze_dictionaries.js` - Parse XML dictionaries into JSON format
 - `node scripts/analyze_sfm.js` - Parse SFM/USFM files
 
-Outputs are written to `data/` directory.
+Outputs are written to `nextjs-app/data/` directory.
 
 ## Development
 
 ```bash
+# Enter active app workspace
+cd nextjs-app
+
 # Start dev server
 npm run dev
 

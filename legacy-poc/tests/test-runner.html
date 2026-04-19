@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Reference Search - Test Runner</title>
+    <link rel="stylesheet" href="css/test-runner.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bible Reference Search Test Runner</h1>
+            <p>Comprehensive test suite for Bible reference indexing and searching functionality</p>
+            <div class="controls">
+                <button class="primary" onclick="runTests()">Run All Tests</button>
+                <button onclick="clearConsole()">Clear Console</button>
+                <button onclick="downloadResults()">Download Results</button>
+            </div>
+        </div>
+
+        <div class="summary" id="summary" style="display: none;">
+            <div class="stat-card passed">
+                <div class="stat-number" id="passedCount">0</div>
+                <div class="stat-label">Tests Passed</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-number" id="failedCount">0</div>
+                <div class="stat-label">Tests Failed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+        </div>
+
+        <div class="console" id="console">
+            <div class="console-line console-debug">Test output will appear here...</div>
+        </div>
+
+        <div class="test-results" id="testResults" style="display: none;"></div>
+
+        <div class="footer">
+            Created for UBS Bible Dictionary Entry Browser
+        </div>
+    </div>
+
+    <script src="js/test-bible-references.js"></script>
+    <script src="js/test-runner.js"></script>
+
+</body>
+</html>
+
