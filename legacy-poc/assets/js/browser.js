@@ -448,6 +448,76 @@
             return 'Target Paragraph';
         }
 
+        function isReferenceLine(line) {
+            const normalized = (line || '').trim();
+            if (!normalized) return false;
+            if (/^[A-Z]?\d{14}$/.test(normalized)) return true;
+            return /^(?:[1-4]?[A-Z]{2,3})\s+\d+:\d+(?:-\d+)?$/.test(normalized);
+        }
+
+        function parseReferenceGroups(lines) {
+            const groups = [];
+            let current = null;
+            lines.forEach((line) => {
+                if (isReferenceLine(line)) {
+                    if (!current) {
+                        current = { sense: '', rendering: '', refs: [] };
+                        groups.push(current);
+                    }
+                    current.refs.push(line);
+                    return;
+                }
+                if (!current || current.refs.length > 0) {
+                    current = { sense: line, rendering: '', refs: [] };
+                    groups.push(current);
+                    return;
+                }
+                if (!current.rendering) {
+                    current.rendering = line;
+                } else {
+                    current.rendering += ` ${line}`;
+                }
+            });
+            return groups;
+        }
+
+        function renderReferenceGroupsHtml(paragraphs) {
+            const allText = paragraphs.join('\n');
+            const lines = allText
+                .split(/\r?\n/)
+                .map((l) => l.trim())
+                .filter(Boolean)
+                .map((l) => formatMnemonicReferencesInContent(l));
+
+            const groups = parseReferenceGroups(lines);
+            if (!groups.some((g) => g.refs.length > 0)) return null;
+
+            const renderedGroups = groups.map((group, idx) => {
+                if (group.refs.length === 0) {
+                    const noteText = group.rendering
+                        ? `${group.sense} ${group.rendering}`.trim()
+                        : group.sense;
+                    return `<div class="reference-note">${escapeXmlText(noteText)}</div>`;
+                }
+                const startsCollapsed = idx !== 0;
+                const refsHtml = group.refs
+                    .map((ref) => `<span class="reference-chip">${escapeXmlText(ref)}</span>`)
+                    .join('');
+                return `
+                    <article class="reference-group">
+                        <div class="reference-group-header">
+                            <div class="reference-group-title">
+                                ${group.sense ? `<div class="reference-sense">${escapeXmlText(group.sense)}</div>` : ''}
+                                ${group.rendering ? `<div class="reference-rendering">${escapeXmlText(group.rendering)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="reference-list${startsCollapsed ? ' collapsed' : ''}" data-ref-idx="${idx}">${refsHtml}</div>
+                    </article>`;
+            }).join('');
+
+            return `<div class="reference-groups">${renderedGroups}</div>`;
+        }
+
         function buildTranslatedEntryHtml(draft) {
             if (!draft) {
                 return '';
@@ -467,9 +537,17 @@
 
             const renderedSections = sections.map((section) => {
                 const heading = section.heading ? `<h4>${escapeXmlText(section.heading)}</h4>` : '';
-                const paragraphs = Array.isArray(section.paragraphs)
-                    ? section.paragraphs.map((p) => `<p>${escapeXmlText(String(p || ''))}</p>`).join('')
-                    : '';
+                const isRefSection = section.label === 'reference' || section.label === 'references';
+                let paragraphs = '';
+                
+                if (isRefSection && Array.isArray(section.paragraphs)) {
+                    paragraphs = renderReferenceGroupsHtml(section.paragraphs) || section.paragraphs.map((p) => `<p>${escapeXmlText(String(p || ''))}</p>`).join('');
+                } else {
+                    paragraphs = Array.isArray(section.paragraphs)
+                        ? section.paragraphs.map((p) => `<p>${escapeXmlText(String(p || ''))}</p>`).join('')
+                        : '';
+                }
+                
                 const injected = (bySection.get(Number(section.id)) || []).map((block) => `
                     <div class="reference-note">
                         <strong>${escapeXmlText(getTargetOnlyTypeLabel(block.type))}:</strong>
